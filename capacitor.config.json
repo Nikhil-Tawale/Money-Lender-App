@@ -1,0 +1,6 @@
+{
+  "appId": "com.money_lender_app.app",
+  "appName": "Money Lender App",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
