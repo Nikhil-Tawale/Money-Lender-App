@@ -1,23 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin , FiPercent, FiCalendar, FiBell, FiAlertCircle, FiInfo } from 'react-icons/fi';
+import { useTheme } from '../contexts/ThemeContext';
+import {
+  FiArrowLeft,
+  FiBell
+} from 'react-icons/fi';
 import { dataService } from '../services/DataServiceFactory';
 import { helperService } from '../services/HelperService';
 
 const AddUser: React.FC = () => {
   const navigate = useNavigate();
+  useTheme();
   const [loading, setLoading] = useState(false);
-  const [calculationError, setCalculationError] = useState('');
-  const [validationErrors, setValidationErrors] = useState({
-    name: '',
-    borrowedAmount: '',
-    interestRate: '',
-    reminderDay: '',
-  });
-  const CurrencyIcon = helperService.getCurrencyIcon();
+  const [_calculationError, _setCalculationError] = useState('');
+
   const currencySymbol = helperService.getCurrencySymbol();
-  const [dateError, setDateError] = useState('');
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -32,34 +31,19 @@ const AddUser: React.FC = () => {
     enableReminder: true
   });
 
-  // Calculate interest based on return date and frequency
   const calculatedInterest = useMemo(() => {
     try {
-      setCalculationError('');
-      
-      if (!formData.borrowedAmount || !formData.interestRate || !formData.returnDate) {
-        return null;
-      }
+      if (!formData.borrowedAmount || !formData.interestRate || !formData.returnDate) return null;
 
       const borrowedAmount = parseFloat(formData.borrowedAmount);
       const interestRate = parseFloat(formData.interestRate);
 
-      if (isNaN(borrowedAmount) || isNaN(interestRate) || borrowedAmount <= 0 || interestRate < 0) {
-        return null;
-      }
+      if (isNaN(borrowedAmount) || isNaN(interestRate)) return null;
 
       const startDate = new Date(formData.startDate);
       const returnDate = new Date(formData.returnDate);
 
-      if (isNaN(returnDate.getTime())) {
-        setCalculationError('Invalid return date');
-        return null;
-      }
-
-      if (returnDate <= startDate) {
-        setCalculationError('Return date must be in the future');
-        return null;
-      }
+      if (returnDate <= startDate) return null;
 
       const periods = helperService.calculateNumberOfPeriods(startDate, returnDate, formData.interestFrequency);
       const interestAmount = helperService.calculateInterestAmount(
@@ -74,126 +58,26 @@ const AddUser: React.FC = () => {
         interestAmount,
         totalAmount: borrowedAmount + interestAmount
       };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error calculating interest';
-      setCalculationError(message);
-      console.error('Calculation error:', message);
+    } catch {
       return null;
     }
-  }, [formData.borrowedAmount, formData.interestRate, formData.returnDate, formData.interestFrequency]);
+  }, [formData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: any) => {
     const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
-    
-    if (type === 'checkbox') {
-      setFormData({ ...formData, [name]: checked });
-    } else if (name === 'returnDate') {
-      setDateError('');
-      setFormData({ ...formData, [name]: value });
-    } else if (name === 'startDate') {
-      setDateError('');
-      setFormData({ ...formData, [name]: value });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const getSuggestedDate = () => {
-    try {
-      const startDate = new Date(formData.startDate);
-      const suggested = helperService.getSuggestedReturnDate(startDate, formData.interestFrequency);
-      return suggested.toISOString().split('T')[0];
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Error getting suggested date';
-      toast.error(message);
-      return new Date().toISOString().split('T')[0];
-    }
+    const checked = e.target.checked;
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // ✅ Comprehensive validation
-    let errors = { ...validationErrors };
-    let hasErrors = false;
 
-    // Name validation
-    if (!formData.name.trim()) {
-      errors.name = 'Please enter a valid name';
-      hasErrors = true;
-    } else {
-      errors.name = '';
-    }
-
-    // Borrowed Amount validation
     const borrowedAmount = parseFloat(formData.borrowedAmount);
-    if (isNaN(borrowedAmount) || borrowedAmount <= 0) {
-      errors.borrowedAmount = 'Please enter a valid borrowed amount (greater than 0)';
-      hasErrors = true;
-    } else {
-      errors.borrowedAmount = '';
-    }
-
-    // Interest Rate validation
     const interestRate = parseFloat(formData.interestRate);
-    if (isNaN(interestRate) || interestRate < 0) {
-      errors.interestRate = 'Please enter a valid interest rate (non-negative)';
-      hasErrors = true;
-    } else {
-      errors.interestRate = '';
-    }
 
-    // Reminder Day validation
-    if (formData.enableReminder) {
-      const reminderDay = parseInt(formData.reminderDay);
-      if (isNaN(reminderDay) || reminderDay < 1 || reminderDay > 31) {
-        errors.reminderDay = 'Please enter a valid reminder day (1-31)';
-        hasErrors = true;
-      } else {
-        errors.reminderDay = '';
-      }
-    }
-
-    setValidationErrors(errors);
-
-    if (hasErrors) {
-      toast.error('Please fix the validation errors');
+    if (!formData.name || isNaN(borrowedAmount) || isNaN(interestRate)) {
+      toast.error('Please fill required fields');
       return;
-    }
-
-    // Validate date for weekly/monthly frequency
-    if (formData.returnDate && (formData.interestFrequency === 'weekly' || formData.interestFrequency === 'monthly')) {
-      if (dateError) {
-        toast.error(dateError);
-        return;
-      }
-
-      try {
-        const startDate = new Date(formData.startDate);
-        const selectedDate = new Date(formData.returnDate);
-        
-        if (isNaN(selectedDate.getTime())) {
-          toast.error('Invalid return date format');
-          return;
-        }
-
-        if (selectedDate <= startDate) {
-          toast.error('Return date must be after start date');
-          return;
-        }
-
-        // if (!helperService.isValidReturnDate(startDate, selectedDate, formData.interestFrequency)) {
-        //   const errorMsg = formData.interestFrequency === 'weekly' 
-        //     ? 'For weekly interest, return date must be exactly 1, 2, 3, 4+ weeks from start date (same day of the week)'
-        //     : 'For monthly interest, return date must be on the same date in future months';
-        //   toast.error(errorMsg);
-        //   return;
-        // }
-      } catch (error) {
-        toast.error(error instanceof Error ? error.message : 'Error validating return date');
-        return;
-      }
     }
 
     setLoading(true);
@@ -203,323 +87,177 @@ const AddUser: React.FC = () => {
         phone: formData.phone,
         email: formData.email,
         address: formData.address,
-        borrowedAmount: borrowedAmount,
-        interestRate: interestRate,
+        borrowedAmount,
+        interestRate,
         interestFrequency: formData.interestFrequency,
         startDate: new Date(formData.startDate).toISOString(),
         returnDate: formData.returnDate ? new Date(formData.returnDate).toISOString() : undefined,
         reminderDay: parseInt(formData.reminderDay),
         enableReminder: formData.enableReminder
       });
-      
-      toast.success('User added successfully!');
+
+      toast.success('User added!');
       navigate('/');
-    } catch (error: any) {
-      console.error('Error adding user:', error);
-      toast.error(error.message || 'Failed to add user');
+    } catch {
+      toast.error('Error adding user');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6 flex items-center">
-          <button onClick={() => navigate('/')} className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <FiArrowLeft className="h-5 w-5 text-gray-600" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Borrower</h1>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-          <div className="space-y-6">
-            {/* Global Error Alert */}
-            {calculationError && (
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <FiAlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
-                <div className="text-sm text-red-700">{calculationError}</div>
-              </div>
-            )}
+      {/* Header */}
+      <div className="max-w-6xl mx-auto px-4 py-6 flex items-center gap-4">
+        <button
+          onClick={() => navigate('/')}
+          className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition dark:text-white"
+        >
+          <FiArrowLeft />
+        </button>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <FiUser className="absolute left-3 top-3 text-gray-400" />
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+          ➕ Add Borrower
+        </h1>
+      </div>
+
+      {/* Form */}
+      <div className="max-w-6xl mx-auto px-4 pb-10">
+        <form
+          onSubmit={handleSubmit}
+          className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-6 md:p-10 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/40 space-y-8"
+        >
+
+          {/* Basic Info */}
+          <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-5 shadow-inner">
+            <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">👤 Basic Info</h2>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {['name', 'phone', 'email', 'address'].map((field) => (
                 <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
+                  key={field}
+                  name={field}
+                  value={(formData as any)[field]}
                   onChange={handleChange}
-                  className={`input-field pl-10 ${validationErrors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Enter full name"
-                  required
+                  placeholder={field === 'name' ? 'Full Name *' : field}
+                  className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 transition dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
-              </div>
-              {validationErrors.name && (
-                <p className="text-xs text-red-600 mt-1">{validationErrors.name}</p>
-              )}
+              ))}
             </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-              <div className="relative">
-                <FiPhone className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="input-field pl-10"
-                  placeholder="Enter phone number"
-                />
-              </div>
-            </div>
+          {/* Loan Details */}
+          <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-5 shadow-inner">
+            <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">💰 Loan Details</h2>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <div className="relative">
-                <FiMail className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="input-field pl-10"
-                  placeholder="Enter email address"
-                />
-              </div>
-            </div>
+            <div className="grid md:grid-cols-2 gap-4">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-              <div className="relative">
-                <FiMapPin className="absolute left-3 top-3 text-gray-400" />
-                <textarea
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  rows={3}
-                  className="input-field pl-10 resize-none"
-                  placeholder="Enter address"
-                />
-              </div>
-            </div>
+              <input
+                name="borrowedAmount"
+                value={formData.borrowedAmount}
+                onChange={handleChange}
+                placeholder={`Amount (${currencySymbol})`}
+                className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Borrowed Amount ({currencySymbol}) <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <CurrencyIcon className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="number"
-                  name="borrowedAmount"
-                  value={formData.borrowedAmount}
-                  onChange={handleChange}
-                  className={`input-field pl-10 ${validationErrors.borrowedAmount ? 'border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Enter borrowed amount"
-                  required
-                />
-              </div>
-              {validationErrors.borrowedAmount && (
-                <p className="text-xs text-red-600 mt-1">{validationErrors.borrowedAmount}</p>
-              )}
-            </div>
+              <input
+                name="interestRate"
+                value={formData.interestRate}
+                onChange={handleChange}
+                placeholder="Interest %"
+                className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Interest Rate (%) <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <FiPercent className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="number"
-                  name="interestRate"
-                  value={formData.interestRate}
-                  onChange={handleChange}
-                  className={`input-field pl-10 ${validationErrors.interestRate ? 'border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Enter interest rate"
-                  step="0.01"
-                  required
-                />
-              </div>
-              {validationErrors.interestRate && (
-                <p className="text-xs text-red-600 mt-1">{validationErrors.interestRate}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Interest Frequency <span className="text-red-500">*</span>
-              </label>
               <select
                 name="interestFrequency"
                 value={formData.interestFrequency}
                 onChange={handleChange}
-                className="input-field"
-                required
+                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
                 <option value="yearly">Yearly</option>
               </select>
-              
-              {formData.interestFrequency === 'weekly' && (
-                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md flex gap-2">
-                  <FiInfo className="text-blue-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-blue-700">
-                    <strong>Weekly Interest:</strong> Return date must be exactly 1, 2, 3, 4+ weeks from today (same day of the week).
-                  </p>
-                </div>
-              )}
 
-              {formData.interestFrequency === 'monthly' && (
-                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md flex gap-2">
-                  <FiInfo className="text-blue-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-blue-700">
-                    <strong>Monthly Interest:</strong> Return date must be on the same date in future months (adjusted automatically for February).
-                  </p>
-                </div>
-              )}
-            </div>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Start Date <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <FiCalendar className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="date"
-                  name="startDate"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  className="input-field pl-10"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Return Date</label>
-              <div className="relative">
-                <FiCalendar className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="date"
-                  name="returnDate"
-                  value={formData.returnDate}
-                  onChange={handleChange}
-                  className={`input-field pl-10 ${dateError ? 'border-red-500 bg-red-50' : ''}`}
-                />
-              </div>
-              
-              {dateError && (
-                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-md flex gap-2">
-                  <FiAlertCircle className="text-red-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-red-700">{dateError}</p>
-                </div>
-              )}
-
-              {!dateError && formData.returnDate && (
-                <p className="mt-2 text-xs text-green-600 flex items-center gap-1">
-                  ✓ Valid return date for {helperService.getFrequencyDisplayText(formData.interestFrequency)} interest
-                </p>
-              )}
-
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, returnDate: getSuggestedDate() })}
-                className="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Use suggested date ({new Date(getSuggestedDate()).toLocaleDateString()})
-              </button>
-            </div>
-
-            {calculatedInterest && formData.returnDate && (
-              <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Interest Calculation Preview</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Borrowed Amount:</span>
-                    <span className="font-medium">{currencySymbol}{parseFloat(formData.borrowedAmount).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">
-                      {formData.interestFrequency === 'weekly' ? 'Weeks' : formData.interestFrequency === 'monthly' ? 'Months' : formData.interestFrequency === 'daily' ? 'Days' : 'Years'}:
-                    </span>
-                    <span className="font-medium">{calculatedInterest.periods}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Interest Rate (per {helperService.getFrequencyDisplayText(formData.interestFrequency).toLowerCase()}):</span>
-                    <span className="font-medium">{parseFloat(formData.interestRate)}%</span>
-                  </div>
-                  <div className="border-t border-green-200 my-2 pt-2 flex justify-between font-semibold text-green-700">
-                    <span>Total Interest ({calculatedInterest.periods}x):</span>
-                    <span>{currencySymbol}{calculatedInterest.interestAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-base font-bold text-blue-700">
-                    <span>Total Amount to Return:</span>
-                    <span>{currencySymbol}{calculatedInterest.totalAmount.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="border-t border-gray-200 pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <label className="flex items-center">
-                  <FiBell className="mr-2 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">Enable Monthly Reminder</span>
-                </label>
-                <input
-                  type="checkbox"
-                  name="enableReminder"
-                  checked={formData.enableReminder}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-              </div>
-
-              {formData.enableReminder && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Reminder Day of Month (1-31) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="reminderDay"
-                    value={formData.reminderDay}
-                    onChange={handleChange}
-                    min="1"
-                    max="31"
-                    className={`input-field ${validationErrors.reminderDay ? 'border-red-500 focus:ring-red-500' : ''}`}
-                    placeholder="Enter day for reminder"
-                  />
-                  {validationErrors.reminderDay && (
-                    <p className="text-xs text-red-600 mt-1">{validationErrors.reminderDay}</p>
-                  )}
-                  {!validationErrors.reminderDay && (
-                    <p className="mt-1 text-xs text-gray-500">
-                      You'll receive a reminder on this day every month
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="flex space-x-3 pt-4">
-              <button type="button" onClick={() => navigate('/')} className="btn-secondary flex-1">
-                Cancel
-              </button>
-              <button type="submit" disabled={loading} className="btn-primary flex-1">
-                {loading ? 'Adding...' : 'Add User'}
-              </button>
+              <input
+                type="date"
+                name="returnDate"
+                value={formData.returnDate}
+                onChange={handleChange}
+                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
+              />
             </div>
           </div>
+
+          {/* Interest Preview */}
+          {calculatedInterest && (
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 border dark:border-gray-700 shadow-md animate-fadeIn">
+              <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">📊 Interest Preview</h3>
+
+              <div className="flex justify-between text-gray-700 dark:text-gray-300">
+                <span>Interest</span>
+                <span className="font-semibold">
+                  {currencySymbol}{calculatedInterest.interestAmount.toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex justify-between font-bold text-lg mt-2 border-t pt-2">
+                <span>Total</span>
+                <span>
+                  {currencySymbol}{calculatedInterest.totalAmount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Reminder Toggle */}
+          <div className="flex items-center justify-between bg-white/70 dark:bg-gray-800/70 p-4 rounded-xl shadow-inner">
+            <span className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
+              <FiBell /> Enable Reminder
+            </span>
+
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="enableReminder"
+                checked={formData.enableReminder}
+                onChange={handleChange}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500 transition"></div>
+              <div className="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-gray-300 rounded-full transition peer-checked:translate-x-5"></div>
+            </label>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="flex-1 py-3 rounded-xl border hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-3 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition shadow-lg"
+            >
+              {loading ? 'Adding...' : 'Add User'}
+            </button>
+          </div>
+
         </form>
       </div>
     </div>

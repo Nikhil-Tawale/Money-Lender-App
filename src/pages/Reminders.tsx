@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { FiBell, FiCalendar, FiUser, FiCheckCircle, FiAlertCircle, FiArrowLeft, FiMail, FiMessageSquare, FiPhone } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "../contexts/ThemeContext";
+import {
+  FiBell,
+  FiCalendar,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiArrowLeft,
+  FiMail,
+  FiMessageSquare,
+  FiPhone
+} from "react-icons/fi";
 import { User } from "../types";
 import { dataService } from "../services/DataServiceFactory";
 import { helperService } from "../services/HelperService";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
 const Reminders: React.FC = () => {
+  useTheme();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [todayReminders, setTodayReminders] = useState<User[]>([]);
@@ -15,12 +27,14 @@ const Reminders: React.FC = () => {
   const [overdueReminders, setOverdueReminders] = useState<User[]>([]);
   const [dueSoonReminders, setDueSoonReminders] = useState<User[]>([]);
 
-  const CurrencyIcon = helperService.getCurrencyIcon();
+  //const CurrencyIcon = helperService.getCurrencyIcon();
   const currencySymbol = helperService.getCurrencySymbol();
   const navigate = useNavigate();
   const { user: adminUser } = useAuth();
-  
-  useEffect(() => { loadUsers() }, []);
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   useEffect(() => {
     if (users.length > 0) {
@@ -56,7 +70,7 @@ const Reminders: React.FC = () => {
         }
         if (returnDate) {
           const daysDiff = Math.ceil(
-            (returnDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24),
+            (returnDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
           );
           if (daysDiff >= 0 && daysDiff <= 7) {
             upcomingList.push(user);
@@ -122,23 +136,35 @@ const Reminders: React.FC = () => {
   const notifyAdminOverdue = (user: User) => {
     if (!adminUser?.email) return;
     const subject = `Overdue Loan Alert for ${user.name}`;
-    const body = `The loan for ${user.name} is overdue. Return date was ${user.returnDate ? new Date(user.returnDate).toLocaleDateString() : 'N/A'}. Total amount due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}. Please collect the money.`;
+    const body = `The loan for ${user.name} is overdue. Return date was ${
+      user.returnDate ? new Date(user.returnDate).toLocaleDateString() : "N/A"
+    }. Total amount due: ${currencySymbol}${calculateTotalWithInterest(
+      user
+    ).toLocaleString()}. Please collect the money.`;
     sendEmail(adminUser.email, subject, body);
   };
 
   const notifyAdminDueSoon = (user: User) => {
     if (!adminUser?.email) return;
     const subject = `Loan Due Soon Alert for ${user.name}`;
-    const body = `The loan for ${user.name} is due in 3 days. Return date: ${user.returnDate ? new Date(user.returnDate).toLocaleDateString() : 'N/A'}. Total amount due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}. Please collect the money.`;
+    const body = `The loan for ${user.name} is due in 3 days. Return date: ${
+      user.returnDate ? new Date(user.returnDate).toLocaleDateString() : "N/A"
+    }. Total amount due: ${currencySymbol}${calculateTotalWithInterest(
+      user
+    ).toLocaleString()}. Please collect the money.`;
     sendEmail(adminUser.email, subject, body);
   };
 
   const notifyBorrowerDue = (user: User) => {
     if (!user.email && !user.phone) return;
-    const dueDate = user.returnDate ? new Date(user.returnDate).toLocaleDateString() : 'N/A';
-    const message = `Dear ${user.name}, your loan is due on ${dueDate}. Total amount due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}. Please make the payment.`;
+    const dueDate = user.returnDate
+      ? new Date(user.returnDate).toLocaleDateString()
+      : "N/A";
+    const message = `Dear ${user.name}, your loan is due on ${dueDate}. Total amount due: ${currencySymbol}${calculateTotalWithInterest(
+      user
+    ).toLocaleString()}. Please make the payment.`;
     if (user.email) {
-      sendEmail(user.email, 'Loan Due Reminder', message);
+      sendEmail(user.email, "Loan Due Reminder", message);
     }
     if (user.phone) {
       sendWhatsApp(user.phone, message);
@@ -149,8 +175,18 @@ const Reminders: React.FC = () => {
   const sendAllOverdueNotifications = async () => {
     for (const user of overdueReminders) {
       if (user.phone) {
-        await sendWhatsApp(user.phone, `Dear ${user.name}, your loan is overdue. Total amount due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}. Please make the payment immediately.`);
-        await sendSMS(user.phone, `Dear ${user.name}, your loan is overdue. Total amount due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}. Please make the payment immediately.`);
+        await sendWhatsApp(
+          user.phone,
+          `Dear ${user.name}, your loan is overdue. Total amount due: ${currencySymbol}${calculateTotalWithInterest(
+            user
+          ).toLocaleString()}. Please make the payment immediately.`
+        );
+        await sendSMS(
+          user.phone,
+          `Dear ${user.name}, your loan is overdue. Total amount due: ${currencySymbol}${calculateTotalWithInterest(
+            user
+          ).toLocaleString()}. Please make the payment immediately.`
+        );
       }
     }
     toast.success("Notifications sent to all overdue borrowers!");
@@ -158,220 +194,106 @@ const Reminders: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading reminders...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center">
-          <button onClick={() => navigate("/")} className="mr-3">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header with back button */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => navigate("/")}
+            className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition dark:text-white"
+          >
             <FiArrowLeft />
           </button>
-          <h1 className="text-2xl font-bold">Reminders</h1>
+          <div className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl shadow-2xl border border-white/40 dark:border-gray-700/40 flex-1 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                Reminders Dashboard
+              </h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Track dues, overdue & reminders
+              </p>
+            </div>
+            <div className="p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg">
+              <FiBell size={24} />
+            </div>
+          </div>
         </div>
 
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <FiCalendar className="h-6 w-6 text-orange-600 mr-2" />
-            <h2 className="text-xl font-semibold text-gray-900">
-              Due in 3 Days
-            </h2>
-            {dueSoonReminders.length > 0 && (
-              <span className="ml-2 bg-orange-500 text-white text-xs rounded-full px-2 py-1">
-                {dueSoonReminders.length}
-              </span>
-            )}
-          </div>
-
-          {dueSoonReminders.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <p className="text-gray-500">No loans due in the next 3 days</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {dueSoonReminders.map((user) => (
-                <div
-                  key={user._id || user.id}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-orange-100 rounded-full">
-                        <FiUser className="h-5 w-5 text-orange-600" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="font-semibold text-gray-900">
-                          {user.name}
-                        </h3>
-                        {user.phone && (
-                          <p className="text-sm text-gray-500">{user.phone}</p>
-                        )}
-                      </div>
-                    </div>
-                    <FiCalendar className="h-5 w-5 text-orange-600" />
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-3 mt-3">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Borrowed Amount:</span>
-                      <span className="font-semibold text-gray-900">
-                        {currencySymbol}
-                        {user.borrowedAmount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Return Date:</span>
-                      <span className="font-semibold text-orange-600">
-                        {user.returnDate
-                          ? new Date(user.returnDate).toLocaleDateString()
-                          : "Not set"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Total Due:</span>
-                      <span className="font-semibold text-red-600">
-                        {currencySymbol}
-                        {calculateTotalWithInterest(user).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 p-2 bg-yellow-50 rounded-lg">
-                    <p className="text-xs text-yellow-800 text-center">
-                      Due soon! Collect the money.
-                    </p>
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => notifyAdminDueSoon(user)}
-                      className="flex items-center px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-                    >
-                      <FiMail className="h-3 w-3 mr-1" />
-                      Email Admin
-                    </button>
-                    {adminUser?.phone && (
-                      <>
-                        <button
-                          onClick={() => sendWhatsApp(adminUser.phone, `Loan for ${user.name} due in 3 days. Total due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}`)}
-                          className="flex items-center px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
-                        >
-                          <FiMessageSquare className="h-3 w-3 mr-1" />
-                          WA Admin
-                        </button>
-                        <button
-                          onClick={() => sendSMS(adminUser.phone, `Loan for ${user.name} due in 3 days. Total due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}`)}
-                          className="flex items-center px-3 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
-                        >
-                          <FiPhone className="h-3 w-3 mr-1" />
-                          SMS Admin
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => notifyBorrowerDue(user)}
-                      className="flex items-center px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
-                    >
-                      <FiMail className="h-3 w-3 mr-1" />
-                      Notify Borrower
-                    </button>
-                  </div>
+        {/* KPI summary cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: "Today", value: todayReminders.length, color: "from-yellow-500 to-orange-500", icon: FiBell },
+            { label: "Due Soon", value: dueSoonReminders.length, color: "from-orange-500 to-red-500", icon: FiAlertCircle },
+            { label: "Overdue", value: overdueReminders.length, color: "from-red-500 to-pink-500", icon: FiAlertCircle },
+            { label: "Upcoming", value: upcomingReminders.length, color: "from-blue-500 to-cyan-500", icon: FiCalendar },
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-white/50 dark:border-gray-700/50"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{item.label}</p>
+                  <p className="text-2xl font-bold text-gray-800 dark:text-white">{item.value}</p>
                 </div>
-              ))}
-            </div>
-          )}
+                <div className={`p-2 rounded-xl bg-gradient-to-r ${item.color} text-white`}>
+                  <item.icon size={18} />
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <FiBell className="h-6 w-6 text-yellow-600 mr-2" />
-            <h2 className="text-xl font-semibold text-gray-900">
-              Today's Reminders
-            </h2>
-            {todayReminders.length > 0 && (
-              <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                {todayReminders.length}
-              </span>
-            )}
-          </div>
+        {/* Due Soon Section */}
+        <ReminderSection
+          title="Due in 3 Days"
+          icon={<FiCalendar className="text-orange-600" />}
+          users={dueSoonReminders}
+          type="due"
+          currencySymbol={currencySymbol}
+          calculateTotal={calculateTotalWithInterest}
+          onNotifyAdmin={notifyAdminDueSoon}
+          onNotifyBorrower={notifyBorrowerDue}
+          adminUser={adminUser}
+          sendWhatsApp={sendWhatsApp}
+          sendSMS={sendSMS}
+          navigate={navigate}
+        />
 
-          {todayReminders.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <p className="text-gray-500">No reminders for today</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {todayReminders.map((user) => (
-                <Link
-                  key={user._id || user.id}
-                  to={`/user/${user._id || user.id}`}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-yellow-100 rounded-full">
-                        <FiUser className="h-5 w-5 text-yellow-600" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="font-semibold text-gray-900">
-                          {user.name}
-                        </h3>
-                        {user.phone && (
-                          <p className="text-sm text-gray-500">{user.phone}</p>
-                        )}
-                      </div>
-                    </div>
-                    <FiAlertCircle className="h-5 w-5 text-yellow-600" />
-                  </div>
+        {/* Today's Reminders */}
+        <ReminderSection
+          title="Today's Reminders"
+          icon={<FiBell className="text-yellow-600" />}
+          users={todayReminders}
+          type="today"
+          currencySymbol={currencySymbol}
+          calculateTotal={calculateTotalWithInterest}
+          onNotifyAdmin={() => {}} // no admin notify for today
+          onNotifyBorrower={notifyBorrowerDue}
+          adminUser={adminUser}
+          sendWhatsApp={sendWhatsApp}
+          sendSMS={sendSMS}
+          navigate={navigate}
+        />
 
-                  <div className="border-t border-gray-200 pt-3 mt-3">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Borrowed Amount:</span>
-                      <span className="font-semibold text-gray-900">
-                        {currencySymbol}
-                        {user.borrowedAmount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Interest Rate:</span>
-                      <span className="font-semibold text-gray-900">
-                        {user.interestRate}%
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Total Due:</span>
-                      <span className="font-semibold text-red-600">
-                        {currencySymbol}
-                        {calculateTotalWithInterest(user).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center text-sm text-gray-500">
-                    <FiCalendar className="h-4 w-4 mr-1" />
-                    <span>Reminder: Day {user.reminderDay} of each month</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <FiAlertCircle className="h-6 w-6 text-red-600 mr-2" />
-              <h2 className="text-xl font-semibold text-gray-900">
-                Overdue Loans
-              </h2>
+        {/* Overdue Section with "Send All" button */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-4 border-b border-white/30 dark:border-gray-700 pb-2">
+            <div className="flex items-center gap-2">
+              <FiAlertCircle className="text-red-600" size={22} />
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Overdue Loans</h2>
               {overdueReminders.length > 0 && (
-                <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
                   {overdueReminders.length}
                 </span>
               )}
@@ -379,192 +301,275 @@ const Reminders: React.FC = () => {
             {overdueReminders.length > 0 && (
               <button
                 onClick={sendAllOverdueNotifications}
-                className="flex items-center px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700 transition shadow-md"
               >
-                <FiMessageSquare className="h-4 w-4 mr-2" />
-                Send All Notifications
+                <FiMessageSquare size={16} /> Send All Notifications
               </button>
             )}
           </div>
-
           {overdueReminders.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <p className="text-gray-500">No overdue loans</p>
-            </div>
+            <EmptyState message="No overdue loans" />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {overdueReminders.map((user) => (
-                <div
+                <ReminderCard
                   key={user._id || user.id}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-red-100 rounded-full">
-                        <FiUser className="h-5 w-5 text-red-600" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="font-semibold text-gray-900">
-                          {user.name}
-                        </h3>
-                        {user.phone && (
-                          <p className="text-sm text-gray-500">{user.phone}</p>
-                        )}
-                      </div>
-                    </div>
-                    <FiAlertCircle className="h-5 w-5 text-red-600" />
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-3 mt-3">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Borrowed Amount:</span>
-                      <span className="font-semibold text-gray-900">
-                        {currencySymbol}
-                        {user.borrowedAmount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Return Date:</span>
-                      <span className="font-semibold text-red-600">
-                        {user.returnDate
-                          ? new Date(user.returnDate).toLocaleDateString()
-                          : "Not set"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Total Due:</span>
-                      <span className="font-semibold text-red-600">
-                        {currencySymbol}
-                        {calculateTotalWithInterest(user).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 p-2 bg-red-50 rounded-lg">
-                    <p className="text-xs text-red-800 text-center">
-                      Overdue! Collect the money immediately.
-                    </p>
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => notifyAdminOverdue(user)}
-                      className="flex items-center px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
-                    >
-                      <FiMail className="h-3 w-3 mr-1" />
-                      Email Admin
-                    </button>
-                    {adminUser?.phone && (
-                      <>
-                        <button
-                          onClick={() => sendWhatsApp(adminUser.phone, `Overdue loan for ${user.name}. Total due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}`)}
-                          className="flex items-center px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600"
-                        >
-                          <FiMessageSquare className="h-3 w-3 mr-1" />
-                          WA Admin
-                        </button>
-                        <button
-                          onClick={() => sendSMS(adminUser.phone, `Overdue loan for ${user.name}. Total due: ${currencySymbol}${calculateTotalWithInterest(user).toLocaleString()}`)}
-                          className="flex items-center px-3 py-1 bg-purple-500 text-white text-xs rounded hover:bg-purple-600"
-                        >
-                          <FiPhone className="h-3 w-3 mr-1" />
-                          SMS Admin
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => notifyBorrowerDue(user)}
-                      className="flex items-center px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
-                    >
-                      <FiMail className="h-3 w-3 mr-1" />
-                      Notify Borrower
-                    </button>
-                  </div>
-                </div>
+                  user={user}
+                  type="overdue"
+                  currencySymbol={currencySymbol}
+                  calculateTotal={calculateTotalWithInterest}
+                  onNotifyAdmin={notifyAdminOverdue}
+                  onNotifyBorrower={notifyBorrowerDue}
+                  adminUser={adminUser}
+                  sendWhatsApp={sendWhatsApp}
+                  sendSMS={sendSMS}
+                  navigate={navigate}
+                />
               ))}
             </div>
           )}
         </div>
 
-        <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <FiCalendar className="h-6 w-6 text-blue-600 mr-2" />
-            <h2 className="text-xl font-semibold text-gray-900">
-              Upcoming Return Dates (Next 7 Days)
-            </h2>
-            {upcomingReminders.length > 0 && (
-              <span className="ml-2 bg-blue-500 text-white text-xs rounded-full px-2 py-1">
-                {upcomingReminders.length}
-              </span>
-            )}
-          </div>
-
-          {upcomingReminders.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <p className="text-gray-500">
-                No upcoming return dates in the next 7 days
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingReminders.map((user) => (
-                <Link
-                  key={user._id || user.id}
-                  to={`/user/${user._id || user.id}`}
-                  className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-blue-100 rounded-full">
-                        <FiUser className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="font-semibold text-gray-900">
-                          {user.name}
-                        </h3>
-                        {user.phone && (
-                          <p className="text-sm text-gray-500">{user.phone}</p>
-                        )}
-                      </div>
-                    </div>
-                    <CurrencyIcon className="h-5 w-5 text-gray-400" />
-                  </div>
-
-                  <div className="border-t border-gray-200 pt-3 mt-3">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Borrowed Amount:</span>
-                      <span className="font-semibold text-gray-900">
-                        {currencySymbol}
-                        {user.borrowedAmount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Return Date:</span>
-                      <span className="font-semibold text-orange-600">
-                        {user.returnDate
-                          ? new Date(user.returnDate).toLocaleDateString()
-                          : "Not set"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {user.returnDate && (
-                    <div className="mt-3 p-2 bg-yellow-50 rounded-lg">
-                      <p className="text-xs text-yellow-800 text-center">
-                        Due soon! Please remind {user.name} about the payment
-                      </p>
-                    </div>
-                  )}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Upcoming Section */}
+        <ReminderSection
+          title="Upcoming Return Dates (Next 7 Days)"
+          icon={<FiCalendar className="text-blue-600" />}
+          users={upcomingReminders}
+          type="upcoming"
+          currencySymbol={currencySymbol}
+          calculateTotal={calculateTotalWithInterest}
+          onNotifyAdmin={() => {}}
+          onNotifyBorrower={notifyBorrowerDue}
+          adminUser={adminUser}
+          sendWhatsApp={sendWhatsApp}
+          sendSMS={sendSMS}
+          navigate={navigate}
+        />
       </div>
     </div>
   );
 };
+
+// Helper component for sections with same layout
+const ReminderSection: React.FC<{
+  title: string;
+  icon: React.ReactNode;
+  users: User[];
+  type: string;
+  currencySymbol: string;
+  calculateTotal: (user: User) => number;
+  onNotifyAdmin: (user: User) => void;
+  onNotifyBorrower: (user: User) => void;
+  adminUser: any;
+  sendWhatsApp: (phone: string, msg: string) => void;
+  sendSMS: (phone: string, msg: string) => void;
+  navigate: any;
+}> = ({
+  title,
+  icon,
+  users,
+  type,
+  currencySymbol,
+  calculateTotal,
+  onNotifyAdmin,
+  onNotifyBorrower,
+  adminUser,
+  sendWhatsApp,
+  sendSMS,
+  navigate,
+}) => (
+  <div className="mb-10">
+    <div className="flex items-center gap-2 mb-4 border-b border-white/30 pb-2">
+      {icon}
+      <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+      {users.length > 0 && (
+        <span className="bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
+          {users.length}
+        </span>
+      )}
+    </div>
+    {users.length === 0 ? (
+      <EmptyState message={`No ${title.toLowerCase()} reminders`} />
+    ) : (
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {users.map((user) => (
+          <ReminderCard
+            key={user._id || user.id}
+            user={user}
+            type={type}
+            currencySymbol={currencySymbol}
+            calculateTotal={calculateTotal}
+            onNotifyAdmin={onNotifyAdmin}
+            onNotifyBorrower={onNotifyBorrower}
+            adminUser={adminUser}
+            sendWhatsApp={sendWhatsApp}
+            sendSMS={sendSMS}
+            navigate={navigate}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+// Individual reminder card with glassmorphism and action buttons
+const ReminderCard: React.FC<{
+  user: User;
+  type: string;
+  currencySymbol: string;
+  calculateTotal: (user: User) => number;
+  onNotifyAdmin: (user: User) => void;
+  onNotifyBorrower: (user: User) => void;
+  adminUser: any;
+  sendWhatsApp: (phone: string, msg: string) => void;
+  sendSMS: (phone: string, msg: string) => void;
+  navigate: any;
+}> = ({
+  user,
+  type,
+  currencySymbol,
+  calculateTotal,
+  onNotifyAdmin,
+  onNotifyBorrower,
+  adminUser,
+  sendWhatsApp,
+  sendSMS,
+  navigate,
+}) => {
+  const getTypeStyles = () => {
+    switch (type) {
+      case "overdue":
+        return { bg: "bg-red-50", border: "border-red-200", text: "text-red-700", badge: "bg-red-100 text-red-700" };
+      case "due":
+        return { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", badge: "bg-orange-100 text-orange-700" };
+      case "today":
+        return { bg: "bg-yellow-50", border: "border-yellow-200", text: "text-yellow-700", badge: "bg-yellow-100 text-yellow-700" };
+      default:
+        return { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", badge: "bg-blue-100 text-blue-700" };
+    }
+  };
+  const styles = getTypeStyles();
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/50 transition-all duration-200"
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+            {user.name.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800">{user.name}</h3>
+            {user.phone && <p className="text-xs text-gray-500">{user.phone}</p>}
+          </div>
+        </div>
+        <span className={`text-xs px-2 py-1 rounded-full font-semibold ${styles.badge}`}>
+          {type === "due" ? "Due Soon" : type === "today" ? "Today" : type === "overdue" ? "Overdue" : "Upcoming"}
+        </span>
+      </div>
+
+      <div className="border-t border-gray-200/50 pt-3 mt-2 space-y-2 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Borrowed:</span>
+          <span className="font-semibold text-gray-800">
+            {currencySymbol}{user.borrowedAmount.toLocaleString()}
+          </span>
+        </div>
+        {user.returnDate && (
+          <div className="flex justify-between">
+            <span className="text-gray-500">Return date:</span>
+            <span className={`font-medium ${styles.text}`}>
+              {new Date(user.returnDate).toLocaleDateString()}
+            </span>
+          </div>
+        )}
+        <div className="flex justify-between">
+          <span className="text-gray-500">Total due:</span>
+          <span className="font-bold text-red-600">
+            {currencySymbol}{calculateTotal(user).toLocaleString()}
+          </span>
+        </div>
+      </div>
+
+      {type === "due" && (
+        <div className="mt-3 p-2 bg-orange-100 rounded-lg text-center">
+          <p className="text-xs text-orange-800">⚠️ Due soon! Collect the money.</p>
+        </div>
+      )}
+      {type === "overdue" && (
+        <div className="mt-3 p-2 bg-red-100 rounded-lg text-center">
+          <p className="text-xs text-red-800">❌ Overdue! Immediate action required.</p>
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 mt-4">
+        <button
+          onClick={() => navigate(`/user/${user._id || user.id}`)}
+          className="text-xs text-indigo-600 underline hover:text-indigo-800"
+        >
+          View Details
+        </button>
+
+        {type !== "today" && onNotifyAdmin && (
+          <button
+            onClick={() => onNotifyAdmin(user)}
+            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            <FiMail size={12} /> Admin
+          </button>
+        )}
+
+        {adminUser?.phone && type !== "today" && (
+          <>
+            <button
+              onClick={() =>
+                sendWhatsApp(
+                  adminUser.phone,
+                  `Loan for ${user.name} is ${type === "overdue" ? "overdue" : "due soon"}. Total due: ${currencySymbol}${calculateTotal(
+                    user
+                  ).toLocaleString()}`
+                )
+              }
+              className="flex items-center gap-1 px-3 py-1.5 text-xs bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+            >
+              <FiMessageSquare size={12} /> WA
+            </button>
+            <button
+              onClick={() =>
+                sendSMS(
+                  adminUser.phone,
+                  `Loan for ${user.name} is ${type === "overdue" ? "overdue" : "due soon"}. Total due: ${currencySymbol}${calculateTotal(
+                    user
+                  ).toLocaleString()}`
+                )
+              }
+              className="flex items-center gap-1 px-3 py-1.5 text-xs bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition"
+            >
+              <FiPhone size={12} /> SMS
+            </button>
+          </>
+        )}
+
+        <button
+          onClick={() => onNotifyBorrower(user)}
+          className="flex items-center gap-1 px-3 py-1.5 text-xs bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+        >
+          <FiMail size={12} /> Notify
+        </button>
+      </div>
+    </motion.div>
+  );
+};
+
+const EmptyState: React.FC<{ message: string }> = ({ message }) => (
+  <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/40">
+    <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
+    <p className="text-gray-600">{message}</p>
+  </div>
+);
 
 export default Reminders;

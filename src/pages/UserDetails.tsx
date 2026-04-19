@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useTheme } from "../contexts/ThemeContext";
 import {
   FiArrowLeft,
   FiUser,
-  FiPercent,
   FiPlus,
-  FiClock,
-  FiCalendar,
   FiBell,
   FiEdit,
   FiTrash2,
@@ -19,6 +17,7 @@ import { helperService } from "../services/HelperService";
 const UserDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  useTheme();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,9 +39,15 @@ const UserDetails: React.FC = () => {
         navigate("/");
         return;
       }
-      borrower['payments'] = borrower['payments']?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) || [];
+
+      borrower["payments"] =
+        borrower["payments"]?.sort(
+          (a, b) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        ) || [];
+
       setUser(borrower);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load user");
       navigate("/");
     } finally {
@@ -55,13 +60,12 @@ const UserDetails: React.FC = () => {
     return helperService.calculateUserRemainingAmount(user);
   };
 
-  const CurrencyIcon = helperService.getCurrencyIcon();
   const currencySymbol = helperService.getCurrencySymbol();
 
   const handleAddPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const amount = parseFloat(paymentAmount);
+
     if (!amount || amount <= 0) {
       toast.error("Enter valid amount");
       return;
@@ -93,240 +97,208 @@ const UserDetails: React.FC = () => {
   };
 
   const handleDeleteUser = async () => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-      await dataService.deleteUser(id!);
-      toast.success("User deleted");
-      navigate("/");
-    } catch {
-      toast.error("Failed to delete user");
-    }
+    if (!window.confirm("Delete this user?")) return;
+    await dataService.deleteUser(id!);
+    toast.success("Deleted");
+    navigate("/");
   };
 
-  // ✅ Edit Navigation (FIXED)
-  const handleEditUser = () => {
-    navigate(`/edit-user/${id}`);
-  };
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading user...
+      </div>
+    );
 
-  if (loading) return <div className="p-10 text-center">Loading...</div>;
   if (!user) return null;
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex justify-between mb-6">
-          <div className="flex items-center">
-            <button onClick={() => navigate("/")} className="mr-3">
-              <FiArrowLeft />
-            </button>
-            <h1 className="text-2xl font-bold">User Details</h1>
-          </div>
+  const remaining = calculateRemainingAmount();
 
-          {/* Edit + Delete */}
+  const riskLevel =
+    remaining > 50000 ? "HIGH" :
+    remaining > 20000 ? "MEDIUM" : "LOW";
+
+  const riskColor =
+    remaining > 50000
+      ? "from-red-600 to-pink-600"
+      : remaining > 20000
+      ? "from-orange-500 to-yellow-500"
+      : "from-green-500 to-emerald-500";
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4 py-6 transition-colors duration-300">
+
+      <div className="max-w-6xl mx-auto">
+
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-8">
+          <button
+            onClick={() => navigate("/")}
+            className="p-3 rounded-xl bg-white dark:bg-gray-800 shadow hover:scale-105 transition dark:text-white"
+          >
+            <FiArrowLeft />
+          </button>
+
           <div className="flex gap-3">
             <button
-              onClick={handleEditUser}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
+              onClick={() => navigate(`/edit-user/${id}`)}
+              className="p-3 rounded-xl bg-blue-500 text-white shadow hover:scale-105 transition"
             >
-              <FiEdit /> Edit
+              <FiEdit />
             </button>
 
             <button
               onClick={handleDeleteUser}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200"
+              className="p-3 rounded-xl bg-red-500 text-white shadow hover:scale-105 transition"
             >
-              <FiTrash2 /> Delete
+              <FiTrash2 />
             </button>
           </div>
         </div>
 
-        {/* User Card */}
-        <div className="bg-white p-6 rounded-xl shadow mb-6 flex items-center">
-          <div className="p-3 bg-blue-100 rounded-full">
-            <FiUser className="text-blue-600" />
-          </div>
-          <div className="ml-4">
-            <h2 className="text-lg font-semibold">{user.name}</h2>
-            <p className="text-gray-500">{user.phone}</p>
+        {/* HERO CARD */}
+        <div className={`relative overflow-hidden p-8 rounded-3xl text-white shadow-2xl bg-gradient-to-r ${riskColor}`}>
+
+          <div className="absolute w-72 h-72 bg-white/10 blur-3xl rounded-full -top-20 -right-20"></div>
+
+          <div className="flex items-center gap-5 relative z-10">
+            <div className="p-4 bg-white/20 rounded-2xl">
+              <FiUser size={28} />
+            </div>
+
+            <div>
+              <h2 className="text-3xl font-bold">{user.name}</h2>
+              <p className="text-sm opacity-80">{user.phone}</p>
+
+              <div className="mt-2 inline-block px-3 py-1 text-xs bg-white/20 rounded-full">
+                Risk: {riskLevel}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* 🔥 UPDATED MIDDLE CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          {/* Loan Start Date */}
-          {user.startDate && (
-            <div className="rounded-2xl p-5 bg-orange-50 border border-orange-100">
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-orange-600">Loan Start Date</p>
-                  <p className="text-2xl font-bold">
-                    {new Date(user.startDate).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="p-3 bg-orange-100 rounded-full">
-                  <FiCalendar />
-                </div>
-              </div>
-            </div>
-          )}
+        {/* STATS */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-8">
 
-          {/* Borrowed */}
-          <div className="rounded-2xl p-5 bg-blue-50 border border-blue-100">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-blue-600">Borrowed</p>
-                <p className="text-2xl font-bold">
-                  {currencySymbol}
-                  {user.borrowedAmount}
-                </p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-full">
-                <CurrencyIcon />
-              </div>
-            </div>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-lg transition">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Borrowed</p>
+            <p className="text-2xl font-bold dark:text-white">
+              {currencySymbol}{user.borrowedAmount}
+            </p>
           </div>
 
-          {/* Interest */}
-          <div className="rounded-2xl p-5 bg-green-50 border border-green-100">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-green-600">Interest</p>
-                <p className="text-2xl font-bold">{user.interestRate}%</p>
-                <p className="text-xs text-gray-500">
-                  {helperService.getFrequencyDisplayText(
-                    user.interestFrequency || "monthly",
-                  )}
-                </p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <FiPercent />
-              </div>
-            </div>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-lg transition">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Interest</p>
+            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+              {user.interestRate}%
+            </p>
           </div>
 
-          {/* Remaining */}
-          <div className="rounded-2xl p-5 bg-purple-50 border border-purple-100">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-purple-600">Remaining</p>
-                <p className="text-2xl font-bold">
-                  {currencySymbol}
-                  {calculateRemainingAmount()}
-                </p>
-              </div>
-              <div className="p-3 bg-purple-100 rounded-full">
-                <FiClock />
-              </div>
-            </div>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-lg transition border-l-4 border-purple-500">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">Remaining</p>
+            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              {currencySymbol}{remaining}
+            </p>
           </div>
 
-          {/* Return Date */}
-          {user.returnDate && (
-            <div className="rounded-2xl p-5 bg-orange-50 border border-orange-100">
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-sm text-orange-600">Return Date</p>
-                  <p className="text-2xl font-bold">
-                    {new Date(user.returnDate).toLocaleDateString()}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {(() => {
-                      const today = new Date();
-                      const d = new Date(user.returnDate);
-                      const diff = Math.ceil(
-                        (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-                      );
-                      return diff >= 0
-                        ? `${diff} days left`
-                        : `${Math.abs(diff)} overdue`;
-                    })()}
-                  </p>
-                </div>
-                <div className="p-3 bg-orange-100 rounded-full">
-                  <FiCalendar />
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Payments */}
-        <div className="bg-white p-6 rounded-xl shadow">
-          <div className="flex justify-between mb-4">
-            <h3 className="font-semibold">Payment History</h3>
+        {/* PAYMENTS */}
+        <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-3xl shadow-xl">
+
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold dark:text-white">Payments</h3>
+
             <button
               onClick={() => setShowPaymentModal(true)}
-              className="btn-primary"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition"
             >
-              <FiPlus /> Add
+              <FiPlus /> Add Payment
             </button>
           </div>
 
-          {user.payments?.map((p, i) => (
-            <div key={i} className="flex justify-between border-b py-2">
-              <span>
-                {currencySymbol}
-                {p.amount}
-              </span>
-              <span>{new Date(p.date).toLocaleDateString()}</span>
+          {user.payments?.length === 0 ? (
+            <p className="text-center text-gray-400 dark:text-gray-500 py-6">
+              No payments yet
+            </p>
+          ) : (
+            <div className="space-y-3">
+
+              {user['payments']?.map((p, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:shadow transition"
+                >
+                  <div>
+                    <p className="font-semibold dark:text-white">
+                      {currencySymbol}{p.amount}
+                    </p>
+                    {p.note && (
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{p.note}</p>
+                    )}
+                  </div>
+
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    {new Date(p.date).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+
             </div>
-          ))}
+          )}
         </div>
+
+        {/* REMINDER */}
         {user.enableReminder && (
-          <div className="rounded-2xl p-5 bg-yellow-50 border border-yellow-100 shadow-md mt-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="p-3 bg-yellow-100 rounded-full">
-                  <FiBell className="h-5 w-5 text-yellow-700" />
-                </div>
-
-                <div className="ml-4">
-                  <p className="text-sm font-semibold text-yellow-700">
-                    Monthly Reminder Enabled
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Day {user.reminderDay} of every month
-                  </p>
-                </div>
-              </div>
-
-              {/* Optional Badge */}
-              <span className="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
-                Active
-              </span>
-            </div>
+          <div className="mt-6 p-4 rounded-2xl bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 flex items-center gap-3">
+            <FiBell className="text-yellow-600 dark:text-yellow-500" />
+            <span className="text-sm dark:text-yellow-200">
+              Reminder on day <b>{user.reminderDay}</b>
+            </span>
           </div>
         )}
+
       </div>
 
-      {/* Modal */}
+      {/* MODAL */}
       {showPaymentModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          
           <form
             onSubmit={handleAddPayment}
-            className="bg-white p-6 rounded-lg w-80"
+            className="w-96 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl"
           >
             <div className="mb-6 flex items-center">
-              <button type="button" onClick={() => setShowPaymentModal(false)} className="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <FiArrowLeft className="h-5 w-5 text-gray-600" />
+              <button type="button" onClick={() => setShowPaymentModal(false)} className="mr-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
+                <FiArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">Cancel Payment</h1>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Add Payment</h2>
             </div>
+
             <input
               type="number"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-3 dark:bg-gray-700 dark:text-white"
+              placeholder="Amount"
               value={paymentAmount}
               onChange={(e) => setPaymentAmount(e.target.value)}
-              placeholder="Amount"
-              className="input-field mb-3"
             />
-            <button className="btn-primary w-full">
+
+            <textarea
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded mb-3 dark:bg-gray-700 dark:text-white"
+              placeholder="Note"
+              value={paymentNote}
+              onChange={(e) => setPaymentNote(e.target.value)}
+            />
+
+            <button className="w-full bg-indigo-600 dark:bg-indigo-500 text-white p-2 rounded hover:bg-indigo-700 dark:hover:bg-indigo-600 transition">
               {submitting ? "Adding..." : "Add Payment"}
             </button>
+
           </form>
+
         </div>
       )}
+
     </div>
   );
 };

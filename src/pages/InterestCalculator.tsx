@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../contexts/ThemeContext";
 import {
   FiPercent,
   FiCalendar,
@@ -11,6 +12,7 @@ import { MdCurrencyRupee } from "react-icons/md";
 import { helperService } from "../services/HelperService";
 
 const InterestCalculator: React.FC = () => {
+  useTheme();
   const [amount, setAmount] = useState("");
   const [interestRate, setInterestRate] = useState("");
   const [frequency, setFrequency] = useState<
@@ -30,12 +32,12 @@ const InterestCalculator: React.FC = () => {
     startDate: "",
     returnDate: "",
   });
+
   const navigate = useNavigate();
   const numericAmount = parseFloat(amount) || 0;
   const numericRate = parseFloat(interestRate) || 0;
   const numericPeriods = parseInt(periods, 10) || 0;
 
-  // Validate inputs - remove useEffect and compute on the fly
   const computedValidationErrors = useMemo(() => {
     const errors = { ...validationErrors };
 
@@ -62,21 +64,12 @@ const InterestCalculator: React.FC = () => {
     }
 
     return errors;
-  }, [
-    amount,
-    numericAmount,
-    interestRate,
-    numericRate,
-    periods,
-    numericPeriods,
-  ]);
+  }, [amount, numericAmount, interestRate, numericRate, periods, numericPeriods]);
 
-  // Update validation errors when computed values change
   useEffect(() => {
     setValidationErrors(computedValidationErrors);
   }, [computedValidationErrors]);
 
-  // Compute dates safely
   const { asStartDate, asReturnDate, dateValidationError } = useMemo(() => {
     let startDateObj: Date;
     let returnDateObj: Date | null = null;
@@ -84,15 +77,12 @@ const InterestCalculator: React.FC = () => {
 
     try {
       startDateObj = new Date(startDate);
-      if (isNaN(startDateObj.getTime())) {
-        throw new Error("Invalid start date");
-      }
+      if (isNaN(startDateObj.getTime())) throw new Error("Invalid start date");
 
       if (returnDate) {
         returnDateObj = new Date(returnDate);
-        if (isNaN(returnDateObj.getTime())) {
+        if (isNaN(returnDateObj.getTime()))
           throw new Error("Invalid return date");
-        }
 
         if (returnDateObj < startDateObj) {
           error = "Return date cannot be before start date";
@@ -103,14 +93,9 @@ const InterestCalculator: React.FC = () => {
       startDateObj = new Date();
     }
 
-    return {
-      asStartDate: startDateObj,
-      asReturnDate: returnDateObj,
-      dateValidationError: error,
-    };
+    return { asStartDate: startDateObj, asReturnDate: returnDateObj, dateValidationError: error };
   }, [startDate, returnDate]);
 
-  // Update date error
   useEffect(() => {
     setDateError(dateValidationError);
   }, [dateValidationError]);
@@ -120,12 +105,11 @@ const InterestCalculator: React.FC = () => {
       setCalculationError("");
 
       if (returnDate && asReturnDate) {
-        const periodsCount = helperService.calculateNumberOfPeriods(
+        return helperService.calculateNumberOfPeriods(
           asStartDate,
           asReturnDate,
           frequency,
         );
-        return periodsCount;
       }
 
       return numericPeriods;
@@ -143,14 +127,12 @@ const InterestCalculator: React.FC = () => {
         return 0;
       }
 
-      const interest = helperService.calculateInterestAmount(
+      return helperService.calculateInterestAmount(
         numericAmount,
         numericRate,
         frequency,
         computedPeriods,
       );
-
-      return interest;
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Error calculating interest";
@@ -160,9 +142,7 @@ const InterestCalculator: React.FC = () => {
   }, [numericAmount, numericRate, frequency, computedPeriods]);
 
   const totalAmount = useMemo(() => {
-    if (numericAmount <= 0 || interestAmount < 0) {
-      return 0;
-    }
+    if (numericAmount <= 0 || interestAmount < 0) return 0;
     return numericAmount + interestAmount;
   }, [numericAmount, interestAmount]);
 
@@ -172,90 +152,84 @@ const InterestCalculator: React.FC = () => {
     calculationError !== "";
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto bg-white shadow rounded-lg p-6">
-        <div className="flex justify-between mb-6">
-          <div className="flex items-center">
-            <button onClick={() => navigate("/")} className="mr-3">
-              <FiArrowLeft />
-            </button>
-            <h1 className="text-2xl font-bold">Interest Calculator</h1>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all">
 
-        <div className="space-y-4">
-          {/* Global Error Alert */}
+      {/* HEADER */}
+      <div className="sticky top-0 z-20 backdrop-blur-xl bg-white/60 dark:bg-slate-800/60 border-b border-white/30 dark:border-slate-700">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center">
+          <button
+            onClick={() => navigate("/")}
+            className="p-2 rounded-lg hover:bg-white/50 dark:hover:bg-slate-700 transition"
+          >
+            <FiArrowLeft size={20} />
+          </button>
+          <h1 className="ml-3 text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Interest Calculator
+          </h1>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto p-4 sm:p-6">
+
+        {/* MAIN CARD */}
+        <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/30 dark:border-slate-700 shadow-2xl rounded-3xl p-5 sm:p-8 space-y-6">
+
+          {/* ERROR */}
           {calculationError && (
-            <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <FiAlertCircle
-                className="text-red-600 flex-shrink-0 mt-0.5"
-                size={20}
-              />
-              <div className="text-sm text-red-700">{calculationError}</div>
+            <div className="flex gap-3 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl">
+              <FiAlertCircle className="text-red-600 mt-0.5" />
+              <p className="text-sm text-red-700 dark:text-red-300">{calculationError}</p>
             </div>
           )}
 
-          {/* Amount + Interest */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* INPUT GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+            {/* Amount */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Borrowed Amount
               </label>
-              <div className="relative mt-1">
-                <MdCurrencyRupee
-                  className="absolute left-3 top-3 text-gray-400"
-                  size={18}
-                />
+              <div className="relative mt-2">
+                <MdCurrencyRupee className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="number"
-                  min="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className={`input-field pl-10 ${validationErrors.amount ? "border-red-500 focus:ring-red-500" : ""}`}
-                  placeholder="0.00"
+                  className={`w-full pl-10 pr-3 py-3 rounded-xl bg-white/70 dark:bg-slate-700 border focus:ring-2 focus:ring-indigo-500 outline-none transition-all hover:shadow-md ${
+                    validationErrors.amount ? "border-red-500" : "border-gray-200 dark:border-slate-600"
+                  }`}
+                  placeholder="Enter amount"
                 />
               </div>
-              {validationErrors.amount && (
-                <p className="text-xs text-red-600 mt-1">
-                  {validationErrors.amount}
-                </p>
-              )}
             </div>
 
+            {/* Interest */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Interest Rate (%)
               </label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <FiPercent className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="number"
-                  min="0"
-                  step="0.01"
                   value={interestRate}
                   onChange={(e) => setInterestRate(e.target.value)}
-                  className={`input-field pl-10 ${validationErrors.interestRate ? "border-red-500 focus:ring-red-500" : ""}`}
-                  placeholder="0.00"
+                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-white/70 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all hover:shadow-md"
+                  placeholder="Rate"
                 />
               </div>
-              {validationErrors.interestRate && (
-                <p className="text-xs text-red-600 mt-1">
-                  {validationErrors.interestRate}
-                </p>
-              )}
             </div>
-          </div>
 
-          {/* Frequency + Periods */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Frequency */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Frequency
               </label>
               <select
                 value={frequency}
                 onChange={(e) => setFrequency(e.target.value as any)}
-                className="input-field mt-1 w-full"
+                className="w-full mt-2 py-3 px-3 rounded-xl bg-white/70 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none"
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -264,106 +238,82 @@ const InterestCalculator: React.FC = () => {
               </select>
             </div>
 
+            {/* Period */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Periods
               </label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <FiRepeat className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="number"
-                  min="1"
                   value={periods}
                   onChange={(e) => setPeriods(e.target.value)}
-                  className={`input-field pl-10 ${validationErrors.periods ? "border-red-500 focus:ring-red-500" : ""}`}
-                  placeholder="1"
+                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-white/70 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none"
                 />
               </div>
-              {validationErrors.periods && (
-                <p className="text-xs text-red-600 mt-1">
-                  {validationErrors.periods}
-                </p>
-              )}
             </div>
-          </div>
 
-          {/* Dates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Start Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Start Date
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className={`input-field mt-1 w-full ${validationErrors.startDate ? "border-red-500 focus:ring-red-500" : ""}`}
+                className="w-full mt-2 py-3 px-3 rounded-xl bg-white/70 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 focus:ring-2 focus:ring-indigo-500 outline-none"
               />
-              {validationErrors.startDate && (
-                <p className="text-xs text-red-600 mt-1">
-                  {validationErrors.startDate}
-                </p>
-              )}
             </div>
 
+            {/* Return Date */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Return Date
               </label>
-              <div className="relative mt-1">
+              <div className="relative mt-2">
                 <FiCalendar className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="date"
                   value={returnDate}
                   onChange={(e) => setReturnDate(e.target.value)}
-                  className={`input-field pl-10 w-full ${validationErrors.returnDate || dateError ? "border-red-500 focus:ring-red-500" : ""}`}
+                  className={`w-full pl-10 pr-3 py-3 rounded-xl bg-white/70 dark:bg-slate-700 border ${
+                    dateError ? "border-red-500" : "border-gray-200 dark:border-slate-600"
+                  } focus:ring-2 focus:ring-indigo-500 outline-none`}
                 />
               </div>
-              {(validationErrors.returnDate || dateError) && (
-                <p className="text-xs text-red-600 mt-1">
-                  {validationErrors.returnDate || dateError}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Result */}
-          <div
-            className={`mt-6 p-4 rounded-lg ${hasErrors ? "bg-gray-100 opacity-60" : "bg-blue-50 border border-blue-200"}`}
-          >
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">
-              Calculated Result
-            </h2>
+          {/* RESULT */}
+          <div className="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl hover:scale-[1.02] transition">
+            <h2 className="text-lg font-semibold mb-3">Result</h2>
 
-            <div className="space-y-2">
-              <div className="flex justify-between text-gray-700">
-                <span>Periods:</span>
-                <span className="font-medium">
-                  {computedPeriods.toFixed(2)}
-                </span>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span>Periods</span>
+                <span>{computedPeriods}</span>
               </div>
 
-              <div className="flex justify-between text-gray-700">
-                <span>Interest:</span>
-                <span className="font-medium">
-                  ₹{interestAmount.toFixed(2)}
-                </span>
+              <div className="flex justify-between">
+                <span>Interest</span>
+                <span>₹{interestAmount.toFixed(2)}</span>
               </div>
 
-              <div className="flex justify-between font-bold text-lg border-t pt-2 text-gray-900">
-                <span>Total Amount:</span>
+              <div className="flex justify-between font-bold text-lg border-t border-white/30 pt-2">
+                <span>Total</span>
                 <span>₹{totalAmount.toFixed(2)}</span>
               </div>
             </div>
 
             {hasErrors && (
-              <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="text-xs text-yellow-700">
-                  Please correct the errors above to see accurate calculations.
-                </p>
-              </div>
+              <p className="text-xs text-yellow-200 mt-3">
+                Fix errors to get accurate results
+              </p>
             )}
           </div>
+
         </div>
       </div>
     </div>
