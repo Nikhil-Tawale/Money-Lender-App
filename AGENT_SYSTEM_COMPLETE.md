@@ -11,13 +11,13 @@
 
 ### ✅ Agent Documentation (7 Agents)
 Located in `.github/agents/`:
-1. **USERSTORY.md** - 🚀 Feature development agent
-2. **BUGFIX.md** - 🐛 Bug fixing agent
-3. **REFACTOR.md** - ♻️ Code refactoring agent
-4. **TESTING.md** - ✅ Test creation agent
-5. **DOCUMENTATION.md** - 📖 Documentation agent
-6. **REVIEW.md** - 👁️ Code review agent
-7. **PERFORMANCE.md** - ⚡ Performance optimization agent
+1. **userstory.agent.md** - 🚀 Feature development agent
+2. **bugfix.agent.md** - 🐛 Bug fixing agent
+3. **refactor.agent.md** - ♻️ Code refactoring agent
+4. **testing.agent.md** - ✅ Test creation agent
+5. **documentation.agent.md** - 📖 Documentation agent
+6. **review.agent.md** - 👁️ Code review agent
+7. **performance.agent.md** - ⚡ Performance optimization agent
 
 ### ✅ Guide Documents
 Located in `.github/`:
@@ -123,13 +123,13 @@ Money-Lender-App/
 ├── .github/                           # 👈 NEW AGENTS FOLDER
 │   ├── agents/                        # 👈 ALL AGENT GUIDES
 │   │   ├── README.md                  # Agent overview
-│   │   ├── USERSTORY.md              # 🚀 Feature creation
-│   │   ├── BUGFIX.md                 # 🐛 Bug fixing
-│   │   ├── REFACTOR.md               # ♻️ Code refactoring
-│   │   ├── TESTING.md                # ✅ Test creation
-│   │   ├── DOCUMENTATION.md          # 📖 Documentation
-│   │   ├── REVIEW.md                 # 👁️ Code review
-│   │   └── PERFORMANCE.md            # ⚡ Performance
+│   │   ├── userstory.agent.md         # 🚀 Feature creation
+│   │   ├── bugfix.agent.md            # 🐛 Bug fixing
+│   │   ├── refactor.agent.md          # ♻️ Code refactoring
+│   │   ├── testing.agent.md           # ✅ Test creation
+│   │   ├── documentation.agent.md     # 📖 Documentation
+│   │   ├── review.agent.md            # 👁️ Code review
+│   │   └── performance.agent.md       # ⚡ Performance
 │   ├── workflows/                     # CI/CD (future)
 │   ├── AGENT_SELECTOR.md              # 👈 SELECTION GUIDE
 │   ├── QUICK_REFERENCE.md             # 👈 QUICK CARD
@@ -158,13 +158,13 @@ Money-Lender-App/
 
 | Agent | Icon | File | Purpose |
 |-------|------|------|---------|
-| UserStory | 🚀 | `USERSTORY.md` | Create new features |
-| BugFix | 🐛 | `BUGFIX.md` | Fix bugs and errors |
-| Refactor | ♻️ | `REFACTOR.md` | Improve code quality |
-| Testing | ✅ | `TESTING.md` | Write tests |
-| Documentation | 📖 | `DOCUMENTATION.md` | Create documentation |
-| Review | 👁️ | `REVIEW.md` | Code quality review |
-| Performance | ⚡ | `PERFORMANCE.md` | Optimize performance |
+| UserStory | 🚀 | `userstory.agent.md` | Create new features |
+| BugFix | 🐛 | `bugfix.agent.md` | Fix bugs and errors |
+| Refactor | ♻️ | `refactor.agent.md` | Improve code quality |
+| Testing | ✅ | `testing.agent.md` | Write tests |
+| Documentation | 📖 | `documentation.agent.md` | Create documentation |
+| Review | 👁️ | `review.agent.md` | Code quality review |
+| Performance | ⚡ | `performance.agent.md` | Optimize performance |
 
 ---
 

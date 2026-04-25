@@ -230,13 +230,13 @@ runSubagent(
 
 | Agent | File | Use For | Time |
 |-------|------|---------|------|
-| 🚀 UserStory | `USERSTORY.md` | New features | 30-60 min |
-| 🐛 BugFix | `BUGFIX.md` | Bug fixes | 15-30 min |
-| ♻️ Refactor | `REFACTOR.md` | Code cleanup | 20-40 min |
-| ✅ Testing | `TESTING.md` | Tests | 30-60 min |
-| 📖 Docs | `DOCUMENTATION.md` | Documentation | 20-40 min |
-| 👁️ Review | `REVIEW.md` | Code review | 15-30 min |
-| ⚡ Performance | `PERFORMANCE.md` | Optimization | 30-60 min |
+| 🚀 UserStory | `userstory.agent.md` | New features | 30-60 min |
+| 🐛 BugFix | `bugfix.agent.md` | Bug fixes | 15-30 min |
+| ♻️ Refactor | `refactor.agent.md` | Code cleanup | 20-40 min |
+| ✅ Testing | `testing.agent.md` | Tests | 30-60 min |
+| 📖 Docs | `documentation.agent.md` | Documentation | 20-40 min |
+| 👁️ Review | `review.agent.md` | Code review | 15-30 min |
+| ⚡ Performance | `performance.agent.md` | Optimization | 30-60 min |
 
 ---
 
@@ -244,9 +244,9 @@ runSubagent(
 
 **For Different Needs:**
 
-- Creating feature? → Read `.github/agents/USERSTORY.md`
-- Have a bug? → Read `.github/agents/BUGFIX.md`
-- Need optimization? → Read `.github/agents/PERFORMANCE.md`
+- Creating feature? → Read `.github/agents/userstory.agent.md`
+- Have a bug? → Read `.github/agents/bugfix.agent.md`
+- Need optimization? → Read `.github/agents/performance.agent.md`
 - Not sure? → Use `.github/QUICK_REFERENCE.md`
 
 **For Project Context:**

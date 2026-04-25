@@ -73,7 +73,7 @@ Print this card or bookmark this file for quick agent selection.
 **When**: Creating new features  
 **Time**: Builds everything (types, services, UI, routes)  
 **Example**: "Create loan refinancing feature"  
-**File**: `.github/agents/USERSTORY.md`
+**File**: `.github/agents/userstory.agent.md`
 
 ### 🐛 BugFix Agent
 **When**: Something is broken  
@@ -184,13 +184,13 @@ Need to...
 ```
 .github/
 ├── agents/
-│   ├── USERSTORY.md        - 🚀 Feature creation
-│   ├── BUGFIX.md           - 🐛 Bug fixing
-│   ├── REFACTOR.md         - ♻️ Code quality
-│   ├── TESTING.md          - ✅ Test writing
-│   ├── DOCUMENTATION.md    - 📖 Documentation
-│   ├── REVIEW.md           - 👁️ Code review
-│   ├── PERFORMANCE.md      - ⚡ Performance
+│   ├── userstory.agent.md   - 🚀 Feature creation
+│   ├── bugfix.agent.md      - 🐛 Bug fixing
+│   ├── refactor.agent.md    - ♻️ Code quality
+│   ├── testing.agent.md     - ✅ Test writing
+│   ├── documentation.agent.md - 📖 Documentation
+│   ├── review.agent.md      - 👁️ Code review
+│   └── performance.agent.md - ⚡ Performance
 │   └── README.md           - Agent overview
 ├── AGENT_SELECTOR.md       - Detailed selection guide
 └── README.md               - This directory guide
@@ -202,13 +202,13 @@ Need to...
 
 | Task | Agent | File |
 |------|-------|------|
-| Add payment export feature | 🚀 | USERSTORY.md |
-| Fix date picker mobile bug | 🐛 | BUGFIX.md |
-| Extract payment logic | ♻️ | REFACTOR.md |
-| Write payment tests | ✅ | TESTING.md |
-| Document API | 📖 | DOCUMENTATION.md |
-| Review code quality | 👁️ | REVIEW.md |
-| Speed up Dashboard | ⚡ | PERFORMANCE.md |
+| Add payment export feature | 🚀 | userstory.agent.md |
+| Fix date picker mobile bug | 🐛 | bugfix.agent.md |
+| Extract payment logic | ♻️ | refactor.agent.md |
+| Write payment tests | ✅ | testing.agent.md |
+| Document API | 📖 | documentation.agent.md |
+| Review code quality | 👁️ | review.agent.md |
+| Speed up Dashboard | ⚡ | performance.agent.md |
 
 ---
 

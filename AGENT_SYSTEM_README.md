@@ -15,13 +15,13 @@
 .github/
 ├── agents/                          # Agent implementations
 │   ├── README.md                    # Agent directory overview  
-│   ├── USERSTORY.md                # 🚀 Create new features
-│   ├── BUGFIX.md                   # 🐛 Fix bugs
-│   ├── REFACTOR.md                 # ♻️ Improve code
-│   ├── TESTING.md                  # ✅ Write tests
-│   ├── DOCUMENTATION.md            # 📖 Create docs
-│   ├── REVIEW.md                   # 👁️ Code review
-│   └── PERFORMANCE.md              # ⚡ Optimize perf
+│   ├── userstory.agent.md   # 🚀 Create new features
+│   ├── bugfix.agent.md      # 🐛 Fix bugs
+│   ├── refactor.agent.md    # ♻️ Improve code
+│   ├── testing.agent.md     # ✅ Write tests
+│   ├── documentation.agent.md # 📖 Create docs
+│   ├── review.agent.md      # 👁️ Code review
+│   └── performance.agent.md # ⚡ Optimize perf
 │
 ├── workflows/                       # CI/CD (ready for future)
 │
@@ -59,7 +59,7 @@
 
 ## 🤖 The 7 Agents Available
 
-### 1. 🚀 **UserStory Agent** (`.github/agents/USERSTORY.md`)
+### 1. 🚀 **UserStory Agent** (`.github/agents/userstory.agent.md`)
 **Purpose**: Create and implement new features  
 **Capabilities**:
 - Design new features from user stories
@@ -310,13 +310,13 @@ All agents have complete access to:
 ## 📂 File Locations Reference
 
 ### Agent Documentation
-- `.github/agents/USERSTORY.md` - 🚀 Feature creation
-- `.github/agents/BUGFIX.md` - 🐛 Bug fixing  
-- `.github/agents/REFACTOR.md` - ♻️ Code refactoring
-- `.github/agents/TESTING.md` - ✅ Test creation
-- `.github/agents/DOCUMENTATION.md` - 📖 Documentation
-- `.github/agents/REVIEW.md` - 👁️ Code review
-- `.github/agents/PERFORMANCE.md` - ⚡ Performance
+- `.github/agents/userstory.agent.md` - 🚀 Feature creation
+- `.github/agents/bugfix.agent.md` - 🐛 Bug fixing  
+- `.github/agents/refactor.agent.md` - ♻️ Code refactoring
+- `.github/agents/testing.agent.md` - ✅ Test creation
+- `.github/agents/documentation.agent.md` - 📖 Documentation
+- `.github/agents/review.agent.md` - 👁️ Code review
+- `.github/agents/performance.agent.md` - ⚡ Performance
 
 ### Selection Guides
 - `.github/QUICK_REFERENCE.md` - Quick card (BOOKMARK!)
@@ -348,13 +348,13 @@ All agents have complete access to:
 
 | Task | Start Here |
 |------|-----------|
-| Create new feature | `.github/agents/USERSTORY.md` |
-| Fix a bug | `.github/agents/BUGFIX.md` |
-| Improve code | `.github/agents/REFACTOR.md` |
-| Optimize performance | `.github/agents/PERFORMANCE.md` |
-| Write tests | `.github/agents/TESTING.md` |
-| Write docs | `.github/agents/DOCUMENTATION.md` |
-| Code review | `.github/agents/REVIEW.md` |
+| Create new feature | `.github/agents/userstory.agent.md` |
+| Fix a bug | `.github/agents/bugfix.agent.md` |
+| Improve code | `.github/agents/refactor.agent.md` |
+| Optimize performance | `.github/agents/performance.agent.md` |
+| Write tests | `.github/agents/testing.agent.md` |
+| Write docs | `.github/agents/documentation.agent.md` |
+| Code review | `.github/agents/review.agent.md` |
 | Can't decide | `.github/QUICK_REFERENCE.md` |
 
 ---

@@ -70,7 +70,7 @@ Create a loan refinancing feature where users can:
 - Get SMS notification
 ```
 
-**Related Files**: [.github/agents/USERSTORY.md](.github/agents/USERSTORY.md)
+**Related Files**: [.github/agents/userstory.agent.md](.github/agents/userstory.agent.md)
 
 ---
 
@@ -91,7 +91,7 @@ Fix the error in Dashboard where user list doesn't update
 after payment. Error: setState not triggering re-render.
 ```
 
-**Related Files**: [.github/agents/BUGFIX.md](.github/agents/BUGFIX.md)
+**Related Files**: [.github/agents/bugfix.agent.md](.github/agents/bugfix.agent.md)
 
 ---
 
@@ -113,7 +113,7 @@ UserDetails.tsx and InterestCalculator.tsx into a
 reusable service utility.
 ```
 
-**Related Files**: [.github/agents/REFACTOR.md](.github/agents/REFACTOR.md)
+**Related Files**: [.github/agents/refactor.agent.md](.github/agents/refactor.agent.md)
 
 ---
 
@@ -137,7 +137,7 @@ with 80%+ coverage including edge cases like:
 - Very large numbers
 ```
 
-**Related Files**: [.github/agents/TESTING.md](.github/agents/TESTING.md)
+**Related Files**: [.github/agents/testing.agent.md](.github/agents/testing.agent.md)
 
 ---
 
@@ -161,7 +161,7 @@ Create comprehensive API documentation including:
 - Authentication details
 ```
 
-**Related Files**: [.github/agents/DOCUMENTATION.md](.github/agents/DOCUMENTATION.md)
+**Related Files**: [.github/agents/documentation.agent.md](.github/agents/documentation.agent.md)
 
 ---
 
@@ -185,7 +185,7 @@ Review the new payment feature implementation for:
 - Error handling
 ```
 
-**Related Files**: [.github/agents/REVIEW.md](.github/agents/REVIEW.md)
+**Related Files**: [.github/agents/review.agent.md](.github/agents/review.agent.md)
 
 ---
 
@@ -209,7 +209,7 @@ Optimize Dashboard page performance:
 - Implement memoization
 ```
 
-**Related Files**: [.github/agents/PERFORMANCE.md](.github/agents/PERFORMANCE.md)
+**Related Files**: [.github/agents/performance.agent.md](.github/agents/performance.agent.md)
 
 ---
 

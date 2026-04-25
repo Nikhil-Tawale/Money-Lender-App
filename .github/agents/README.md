@@ -5,7 +5,7 @@ Complete index of all available agents for the Money-Lender-App project.
 ## 📋 Available Agents (7 Total)
 
 ### 1. 🚀 UserStory Agent
-**File**: [USERSTORY.md](USERSTORY.md)
+**File**: [userstory.agent.md](userstory.agent.md)
 
 For creating and implementing new features based on requirements.
 
@@ -20,7 +20,7 @@ For creating and implementing new features based on requirements.
 ---
 
 ### 2. 🐛 BugFix Agent
-**File**: [BUGFIX.md](BUGFIX.md)
+**File**: [bugfix.agent.md](bugfix.agent.md)
 
 For identifying, analyzing, and fixing bugs in the codebase.
 
@@ -35,7 +35,7 @@ For identifying, analyzing, and fixing bugs in the codebase.
 ---
 
 ### 3. ♻️ Refactor Agent
-**File**: [REFACTOR.md](REFACTOR.md)
+**File**: [refactor.agent.md](refactor.agent.md)
 
 For improving code quality and maintainability without changing functionality.
 
@@ -50,7 +50,7 @@ For improving code quality and maintainability without changing functionality.
 ---
 
 ### 4. ✅ Testing Agent
-**File**: [TESTING.md](TESTING.md)
+**File**: [testing.agent.md](testing.agent.md)
 
 For creating comprehensive tests across the codebase.
 
@@ -65,7 +65,7 @@ For creating comprehensive tests across the codebase.
 ---
 
 ### 5. 📖 Documentation Agent
-**File**: [DOCUMENTATION.md](DOCUMENTATION.md)
+**File**: [documentation.agent.md](documentation.agent.md)
 
 For creating and maintaining project documentation.
 
@@ -80,7 +80,7 @@ For creating and maintaining project documentation.
 ---
 
 ### 6. 👁️ Review Agent
-**File**: [REVIEW.md](REVIEW.md)
+**File**: [review.agent.md](review.agent.md)
 
 For conducting thorough code quality reviews.
 
@@ -95,7 +95,7 @@ For conducting thorough code quality reviews.
 ---
 
 ### 7. ⚡ Performance Agent
-**File**: [PERFORMANCE.md](PERFORMANCE.md)
+**File**: [performance.agent.md](performance.agent.md)
 
 For optimizing application performance and efficiency.
 
@@ -167,13 +167,13 @@ For optimizing application performance and efficiency.
 ```
 .github/
 ├── agents/
-│   ├── USERSTORY.md        # 🚀 Feature development
-│   ├── BUGFIX.md           # 🐛 Bug fixing
-│   ├── REFACTOR.md         # ♻️ Code improvement
-│   ├── TESTING.md          # ✅ Test creation
-│   ├── DOCUMENTATION.md    # 📖 Documentation
-│   ├── REVIEW.md           # 👁️ Code review
-│   ├── PERFORMANCE.md      # ⚡ Performance
+│   ├── userstory.agent.md        # 🚀 Feature development
+│   ├── bugfix.agent.md           # 🐛 Bug fixing
+│   ├── refactor.agent.md         # ♻️ Code refactoring
+│   ├── testing.agent.md          # ✅ Test creation
+│   ├── documentation.agent.md    # 📖 Documentation
+│   ├── review.agent.md           # 👁️ Code review
+│   └── performance.agent.md      # ⚡ Performance
 │   └── README.md           # This file
 ├── AGENT_SELECTOR.md       # Agent selection guide
 └── workflows/              # GitHub Actions workflows

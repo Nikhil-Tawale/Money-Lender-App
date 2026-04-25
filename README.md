@@ -82,13 +82,13 @@ This directory contains configuration and documentation for automated agents tha
 .github/
 ├── agents/                  # Agent implementations and guides
 │   ├── README.md           # Agent directory overview
-│   ├── USERSTORY.md        # Feature development agent
-│   ├── BUGFIX.md           # Bug fixing agent
-│   ├── REFACTOR.md         # Code refactoring agent
-│   ├── TESTING.md          # Test creation agent
-│   ├── DOCUMENTATION.md    # Documentation agent
-│   ├── REVIEW.md           # Code review agent
-│   └── PERFORMANCE.md      # Performance optimization agent
+│   ├── userstory.agent.md    # Feature development agent
+│   ├── bugfix.agent.md       # Bug fixing agent
+│   ├── refactor.agent.md     # Code refactoring agent
+│   ├── testing.agent.md      # Test creation agent
+│   ├── documentation.agent.md # Documentation agent
+│   ├── review.agent.md       # Code review agent
+│   └── performance.agent.md  # Performance optimization agent
 │
 ├── workflows/              # GitHub Actions workflows (future)
 │   └── (CI/CD pipelines)
@@ -255,13 +255,13 @@ All agents have access to comprehensive memory files:
 
 Each agent has a detailed guide:
 
-1. **[agents/USERSTORY.md](agents/USERSTORY.md)** - Feature development
-2. **[agents/BUGFIX.md](agents/BUGFIX.md)** - Bug fixing
-3. **[agents/REFACTOR.md](agents/REFACTOR.md)** - Code refactoring
-4. **[agents/TESTING.md](agents/TESTING.md)** - Test creation
-5. **[agents/DOCUMENTATION.md](agents/DOCUMENTATION.md)** - Documentation
-6. **[agents/REVIEW.md](agents/REVIEW.md)** - Code review
-7. **[agents/PERFORMANCE.md](agents/PERFORMANCE.md)** - Performance
+1. **[agents/userstory.agent.md](agents/userstory.agent.md)** - Feature development
+2. **[agents/bugfix.agent.md](agents/bugfix.agent.md)** - Bug fixing
+3. **[agents/refactor.agent.md](agents/refactor.agent.md)** - Code refactoring
+4. **[agents/testing.agent.md](agents/testing.agent.md)** - Test creation
+5. **[agents/documentation.agent.md](agents/documentation.agent.md)** - Documentation
+6. **[agents/review.agent.md](agents/review.agent.md)** - Code review
+7. **[agents/performance.agent.md](agents/performance.agent.md)** - Performance
 
 ## 📊 Agent Capabilities
 
