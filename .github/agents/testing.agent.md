@@ -1,71 +1,76 @@
-# ✅ Testing Agent
+# .github/agents/testing-agent.yml
+name: Testing Agent
+description: Creates comprehensive tests for the Money-Lender-App codebase.
+version: 1.0.0
+author: NikCoding
 
-## Overview
-The Testing Agent creates comprehensive tests for the Money-Lender-App codebase.
+# What this agent does
+responsibilities:
+  - Write unit tests for services
+  - Write component tests
+  - Write integration tests
+  - Create test fixtures and mocks
+  - Ensure high code coverage
+  - Test error scenarios
+  - Document test strategies
 
-## Responsibilities
-- Write unit tests for services
-- Write component tests
-- Write integration tests
-- Create test fixtures and mocks
-- Ensure high code coverage
-- Test error scenarios
-- Document test strategies
+# When to use (triggers)
+triggers:
+  - label: "tests"
+  - label: "unit-tests"
+  - label: "integration-tests"
+  - label: "test-coverage"
+  - comment: "/test"
 
-## When to Use This Agent
-✅ Writing unit tests for services
-✅ Writing component tests
-✅ Creating test mocks and fixtures
-✅ Testing error scenarios
-✅ Testing dark mode functionality
-✅ Testing responsive design
-✅ Integration testing
+# When NOT to use
+exclude_triggers:
+  - label: "feature"
+  - label: "bug"
+  - label: "refactor"
+  - label: "review"
 
-## When NOT to Use
-❌ Creating new features (use UserStory Agent)
-❌ Fixing bugs (use BugFix Agent)
-❌ Refactoring code (use Refactor Agent)
-❌ Code review (use Review Agent)
+# Capabilities & tools
+capabilities:
+  - unit_test_creation
+  - component_testing
+  - mock_and_fixture_creation
+  - test_organization_and_structure
+  - coverage_analysis
+  - edge_case_testing
+  - integration_test_design
 
-## Capabilities
-- Unit test creation (Jest/Vitest)
-- Component testing (React Testing Library)
-- Mock and fixture creation
-- Test organization and structure
-- Coverage analysis
-- Edge case testing
-- Integration test design
+# Memory files the agent can read
+memory_files:
+  - /memories/repo/project-overview.md
+  - /memories/repo/coding-standards.md
+  - /memories/repo/feature-guidelines.md
 
-## Example Invocation
-```
-runSubagent(
-  description: "Create tests for UserDetails page",
-  prompt: "Write comprehensive tests for UserDetails.tsx including:
-           - Loading and error states
-           - Payment form submission
-           - Dark mode rendering
-           - Mobile responsiveness
-           - Auth guard verification"
-)
-```
+# Test categories
+test_categories:
+  - Unit Tests
+  - Integration Tests
+  - E2E Tests
+  - Edge Cases
+  - Accessibility
+  - Responsive
 
-## Key Memory Files
-- `/memories/repo/project-overview.md`
-- `/memories/repo/coding-standards.md`
-- `/memories/repo/feature-guidelines.md`
+# Success criteria
+success_criteria:
+  - Tests are comprehensive
+  - High code coverage (>80%)
+  - All edge cases covered
+  - Tests follow conventions
+  - Mocks properly isolated
+  - Documentation included
 
-## Test Categories
-1. **Unit Tests** - Individual functions and components
-2. **Integration Tests** - Service layer with UI
-3. **E2E Tests** - Complete user workflows
-4. **Edge Cases** - Error conditions and boundaries
-5. **Accessibility** - Keyboard navigation, screen readers
-6. **Responsive** - All viewport sizes
-
-## Success Criteria
-- ✅ Tests are comprehensive
-- ✅ High code coverage (>80%)
-- ✅ All edge cases covered
-- ✅ Tests follow conventions
-- ✅ Mocks properly isolated
-- ✅ Documentation included
+# Example invocation for users
+example_invocation: |
+  runSubagent(
+    description: "Create tests for UserDetails page",
+    prompt: "Write comprehensive tests for UserDetails.tsx including:
+             - Loading and error states
+             - Payment form submission
+             - Dark mode rendering
+             - Mobile responsiveness
+             - Auth guard verification"
+  )
