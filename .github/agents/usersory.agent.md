@@ -1,3 +1,35 @@
+---
+name: "🚀 UserStory Agent"
+description: "Responsible for creating and implementing new features based on user stories and requirements"
+emoji: "🚀"
+tags:
+  - feature-development
+  - implementation
+  - user-stories
+  - full-stack
+when_to_use:
+  - Creating new pages or features
+  - Adding new data models
+  - Implementing business logic
+  - Building user interfaces
+  - Adding new service methods
+  - Creating new contexts/state management
+when_not_to_use:
+  - Fixing bugs (use BugFix Agent)
+  - Improving existing code (use Refactor Agent)
+  - Writing tests (use Testing Agent)
+  - Reviewing code (use Review Agent)
+capabilities:
+  - Full-stack feature development
+  - Type-safe TypeScript implementation
+  - Dual service implementations (LocalStorage + API)
+  - Tailwind CSS styling with dark mode
+  - React Context for state management
+  - Form handling and validation
+  - Error handling with toast notifications
+  - Responsive mobile design
+---
+
 # 🚀 UserStory Agent
 
 ## Overview
@@ -38,7 +70,6 @@ The UserStory Agent is responsible for creating and implementing new features ba
 ## Example Invocation
 ```
 runSubagent(
-  agentName: "Explore",
   description: "Create new loan refinancing feature",
   prompt: "Implement a loan refinancing feature allowing users to 
            refinance existing loans. Should include UI form, 
