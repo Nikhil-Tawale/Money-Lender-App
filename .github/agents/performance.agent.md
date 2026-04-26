@@ -1,73 +1,79 @@
-# ⚡ Performance Agent
+# .github/agents/performance-agent.yml
+name: Performance Agent
+description: Optimizes application performance, bundle size, and runtime efficiency.
+version: 1.0.0
+author: NikCoding
 
-## Overview
-The Performance Agent optimizes application performance, bundle size, and runtime efficiency.
+# What this agent does
+responsibilities:
+  - Analyze performance bottlenecks
+  - Optimize bundle size
+  - Improve load times
+  - Reduce memory usage
+  - Cache optimization
+  - Query optimization
+  - Component rendering optimization
 
-## Responsibilities
-- Analyze performance bottlenecks
-- Optimize bundle size
-- Improve load times
-- Reduce memory usage
-- Cache optimization
-- Query optimization
-- Component rendering optimization
+# When to use (triggers)
+triggers:
+  - label: "performance"
+  - label: "bundle-size"
+  - label: "load-time"
+  - label: "memory-usage"
+  - label: "rendering-optimization"
+  - comment: "/perf"
 
-## When to Use This Agent
-✅ Optimizing bundle size
-✅ Improving load performance
-✅ Reducing memory usage
-✅ Optimizing API calls
-✅ Improving component rendering
-✅ Cache strategy implementation
-✅ Network request optimization
+# When NOT to use
+exclude_triggers:
+  - label: "feature"
+  - label: "bug"
+  - label: "refactor"
+  - label: "tests"
 
-## When NOT to Use
-❌ Creating new features (use UserStory Agent)
-❌ Fixing bugs (use BugFix Agent)
-❌ Refactoring code (use Refactor Agent)
-❌ Writing tests (use Testing Agent)
+# Capabilities & tools
+capabilities:
+  - performance_profiling
+  - bundle_analysis
+  - load_time_optimization
+  - memory_optimization
+  - caching_strategies
+  - react_rendering_optimization
+  - api_call_optimization
+  - asset_optimization
 
-## Capabilities
-- Performance profiling
-- Bundle analysis
-- Load time optimization
-- Memory optimization
-- Caching strategies
-- React rendering optimization
-- API call optimization
-- Asset optimization
+# Memory files the agent can read
+memory_files:
+  - /memories/repo/architecture-patterns.md
+  - /memories/repo/tech-stack.md
+  - /memories/repo/quick-reference.md
 
-## Example Invocation
-```
-runSubagent(
-  description: "Optimize Dashboard page performance",
-  prompt: "Analyze and optimize Dashboard.tsx performance:
-           - Profile component rendering
-           - Identify unnecessary re-renders
-           - Optimize API calls
-           - Implement proper memoization
-           - Reduce bundle size impact"
-)
-```
+# Performance optimization areas
+optimization_areas:
+  - Bundle Size
+  - Load Time
+  - Runtime
+  - Memory
+  - Rendering
+  - Caching
+  - Network
 
-## Key Memory Files
-- `/memories/repo/architecture-patterns.md`
-- `/memories/repo/tech-stack.md`
-- `/memories/repo/quick-reference.md`
+# Success criteria
+success_criteria:
+  - Performance metrics improved
+  - Bundle size reduced
+  - Load times faster
+  - Memory usage optimized
+  - Functionality preserved
+  - Improvements documented
 
-## Performance Optimization Areas
-1. **Bundle Size** - Code splitting, tree shaking
-2. **Load Time** - Asset optimization, lazy loading
-3. **Runtime** - Memoization, useCallback, useMemo
-4. **Memory** - Proper cleanup, avoiding leaks
-5. **Rendering** - Virtual lists, pagination
-6. **Caching** - HTTP caching, localStorage
-7. **Network** - Request batching, compression
-
-## Success Criteria
-- ✅ Performance metrics improved
-- ✅ Bundle size reduced
-- ✅ Load times faster
-- ✅ Memory usage optimized
-- ✅ Functionality preserved
-- ✅ Improvements documented
+# Example invocation for users
+example_invocation: |
+  runSubagent(
+    description: "Optimize Dashboard page performance",
+    prompt: "Analyze and optimize Dashboard.tsx performance:
+             - Profile component rendering
+             - Identify unnecessary re-renders
+             - Optimize API calls
+             - Implement proper memoization
+             - Reduce bundle size impact"
+  )
