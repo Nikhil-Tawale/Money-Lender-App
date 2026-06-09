@@ -1,0 +1,47 @@
+name: Playwright End-to-end Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Build app
+        run: npm run build
+
+      - name: Start preview server
+        run: npm run preview -- --port 5173 &
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:5173 --timeout 60000
+
+      - name: Setup Playwright in testcases
+        working-directory: ./testcases
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: ./testcases
+        run: npm test
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: playwright-report
+          path: testcases/playwright-report/
+          retention-days: 30
