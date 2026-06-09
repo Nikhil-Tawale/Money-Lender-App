@@ -75,7 +75,7 @@ export default defineConfig({
   webServer: {
     command: 'cd .. && npm run build && npm run preview -- --port 5173',
     url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 });
 
