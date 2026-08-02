@@ -1,73 +1,108 @@
-# React + TypeScript + Vite
+# Money Lender App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, responsive loan management web application built with React + TypeScript + Vite. This project helps manage borrowers, loans, payments and administrative workflows for a small lending business.
 
-Currently, two official plugins are available:
+## Key features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Create, view and manage borrowers
+- Create and track loans with terms and interest
+- Record payments against loans
+- Responsive UI (mobile & desktop)
+- TypeScript for type-safety and maintainability
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- TypeScript
+- Vite
+- CSS
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 18+ or compatible
+- npm or yarn
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Clone the repository
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/Nikhil-Tawale/Money-Lender-App.git
+cd Money-Lender-App
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+# or
+# yarn
 ```
+
+Run development server
+
+```bash
+npm run dev
+# or
+# yarn dev
+```
+
+Build for production
+
+```bash
+npm run build
+# or
+# yarn build
+```
+
+Preview production build locally
+
+```bash
+npm run preview
+# or
+# yarn preview
+```
+
+## Environment
+
+If the app requires any runtime configuration (API base URL, keys), add a `.env` file at the project root with the required variables. Example:
+
+```
+VITE_API_BASE_URL=https://api.example.com
+```
+
+Note: Vite exposes variables prefixed with `VITE_` to the client-side bundle.
+
+## Project structure (high level)
+
+- src/ - application source code (components, pages, services)
+- public/ - static assets
+- .github/ - agent and automation configuration (agents, workflows)
+- memories/ - project memory files used by project agents
+
+## Agents & developer helpers
+
+This repository contains a small agents framework and documentation under `.github/agents/` used to scaffold features, bug fixes, refactors, testing and documentation. See `.github/agents/README.md` for details.
+
+## Contributing
+
+Contributions are welcome. Typical workflow:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/my-feature`
+3. Make changes and add tests
+4. Open a pull request with a clear description of the change
+
+Please follow TypeScript and linting rules where applicable.
+
+## License
+
+This project does not specify a license in the repository. If you want to open-source it, add a LICENSE file (MIT, Apache-2.0, etc.).
+
+## Contact
+
+Maintainer: Nikhil Tawale
+
+---
+
+_Last updated: 2026-08-02_
