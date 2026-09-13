@@ -153,6 +153,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           {navItem("/", <FiHome />, "Dashboard")}
           {navItem("/add-user", <FiUserPlus />, "Add User")}
           {navItem("/interest-calculator", <FiRepeat />, "Calculator")}
+          {navItem("/reminders", <FiBell />, "Reminders")}
         </nav>
       </div>
 
@@ -178,7 +179,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
       {/* Animated Background Pattern */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-300 dark:bg-indigo-900 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-20 animate-pulse"></div>
@@ -186,29 +187,33 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       </div>
 
       {/* MOBILE TOP BAR */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl p-4 flex justify-between items-center shadow-lg z-50 border-b border-gray-200 dark:border-gray-800">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl px-3 flex justify-between items-center shadow-lg z-50 border-b border-gray-200 dark:border-gray-800">
         <button
           onClick={() => setMobileSidebar(true)}
-          className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800"
+          aria-label="Open navigation"
+          className="flex min-h-11 min-w-11 items-center gap-2 rounded-xl px-2 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
-          <FiMenu className="text-gray-700 dark:text-gray-200" />
-        </button>
-
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="w-7 h-7 shrink-0 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
             <CurrencyIcon className="text-white text-sm" />
           </div>
-          <h1 className="font-bold text-lg bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+          <span className="font-bold text-base bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent truncate">
             LendFlow
-          </h1>
-        </div>
-
-        <button
-          onClick={toggleDarkMode}
-          className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800"
-        >
-          {darkMode ? <FiSun /> : <FiMoon />}
+          </span>
         </button>
+
+        <div className="flex items-center gap-1">
+          <Link to="/reminders" aria-label="Open reminders" className="relative min-h-11 min-w-11 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">
+            <FiBell />
+            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500" />
+          </Link>
+          <button
+            onClick={toggleDarkMode}
+            aria-label="Toggle dark mode"
+            className="min-h-11 min-w-11 p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+          >
+            {darkMode ? <FiSun /> : <FiMoon />}
+          </button>
+        </div>
       </div>
 
       {/* MOBILE SIDEBAR */}
@@ -219,10 +224,13 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setMobileSidebar(false);
+            }}
           >
-            <div className="w-80 h-screen bg-gradient-to-br from-indigo-700 via-indigo-800 to-purple-800 text-white p-6 shadow-2xl flex flex-col overflow-y-auto dark:from-gray-900 dark:via-gray-950 dark:to-black">
-              <div className="flex justify-between items-center mb-8">
+              <div className="app-sidebar-scroll w-[min(18rem,82vw)] h-screen bg-gradient-to-br from-indigo-700 via-indigo-800 to-purple-800 text-white p-4 shadow-2xl flex flex-col overflow-y-auto dark:from-gray-900 dark:via-gray-950 dark:to-black">
+              <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center">
                     <CurrencyIcon className="text-white" />
@@ -246,7 +254,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       <motion.aside
         animate={{ width: sidebarOpen ? 280 : 88 }}
         transition={{ type: "spring", damping: 20 }}
-        className="hidden md:flex bg-gradient-to-br from-indigo-700 via-indigo-800 to-purple-800 text-white shadow-2xl relative z-10"
+        className="hidden md:flex h-screen overflow-hidden bg-gradient-to-br from-indigo-700 via-indigo-800 to-purple-800 text-white shadow-2xl relative z-10"
       >
         <div className="w-full p-5">
           <Sidebar />
@@ -254,9 +262,9 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       </motion.aside>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col pt-20 md:pt-0 overflow-x-hidden min-h-screen">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col pt-16 md:pt-0 overflow-hidden">
         {/* HEADER */}
-        <header className="sticky top-0 z-20 flex justify-end items-center p-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
+        <header className="hidden md:flex shrink-0 z-20 justify-end items-center p-3 sm:p-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
           <div className="flex items-center gap-3">
             <button
               onClick={toggleDarkMode}
@@ -264,15 +272,6 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             >
               {darkMode ? <FiSun /> : <FiMoon />}
             </button>
-
-            <Link to="/reminders">
-              <div className="relative">
-                <button className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:scale-105 transition-transform">
-                  <FiBell />
-                </button>
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </div>
-            </Link>
 
             {/* Profile Dropdown - Click to open, not logout */}
             <div className="relative" ref={profileRef}>
@@ -283,7 +282,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-lg">
                   {user?.name?.charAt(0).toUpperCase() || "U"}
                 </div>
-                <span className="font-semibold text-gray-700 dark:text-gray-200">
+                <span className="hidden sm:inline font-semibold text-gray-700 dark:text-gray-200">
                   {user?.name}
                 </span>
               </button>
@@ -333,7 +332,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
         </header>
 
         {/* MAIN CONTENT AREA */}
-        <main className={children ? "p-4 md:p-8" : "p-4 md:p-8 space-y-8"}>
+        <main className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-3 sm:p-4 md:p-8 ${children ? "" : "space-y-5 sm:space-y-8"}`}>
           {children || <>
           {/* KPI CARDS */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">

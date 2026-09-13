@@ -111,14 +111,14 @@ const AddUser: React.FC = () => {
       <div className="w-full pb-10">
         <form
           onSubmit={handleSubmit}
-          className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-6 md:p-10 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/40 space-y-8"
+          className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-3 sm:p-5 md:p-8 rounded-2xl shadow-2xl border border-white/40 dark:border-gray-700/40 space-y-5 sm:space-y-6"
         >
 
           {/* Basic Info */}
-          <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-5 shadow-inner">
+          <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 shadow-inner">
             <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">👤 Basic Info</h2>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-3">
               {['name', 'phone', 'email', 'address'].map((field) => (
                 <input
                   key={field}
@@ -133,10 +133,10 @@ const AddUser: React.FC = () => {
           </div>
 
           {/* Loan Details */}
-          <div className="bg-white/70 dark:bg-gray-800/70 rounded-2xl p-5 shadow-inner">
+          <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 shadow-inner">
             <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">💰 Loan Details</h2>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-3">
 
               <input
                 name="borrowedAmount"

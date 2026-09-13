@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply bg-gray-50 dark:bg-gray-950 transition-colors duration-300;
+    overflow-x: hidden;
   }
 
   html.dark input,
@@ -33,6 +34,24 @@
 
   body:has(.edit-user-page)::-webkit-scrollbar {
     display: none;
+  }
+
+  .app-sidebar-scroll {
+    scrollbar-width: none;
+  }
+
+  .app-sidebar-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
   }
 }
 

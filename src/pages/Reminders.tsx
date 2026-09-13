@@ -200,10 +200,15 @@ const Reminders: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
-      <div className="w-full">
+    <div className="min-h-full transition-colors duration-300">
+      <div className="w-full max-w-6xl mx-auto">
+        <div className="flex flex-col gap-1 mb-5 sm:mb-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-400">Loan follow-up</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Reminders</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Stay ahead of upcoming payments and overdue loans.</p>
+        </div>
         {/* KPI summary cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-7">
           {[
             { label: "Today", value: todayReminders.length, color: "from-yellow-500 to-orange-500", icon: FiBell },
             { label: "Due Soon", value: dueSoonReminders.length, color: "from-orange-500 to-red-500", icon: FiAlertCircle },
@@ -215,14 +220,14 @@ const Reminders: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 shadow-xl border border-white/50 dark:border-gray-700/50"
+              className="bg-white dark:bg-gray-900 rounded-xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-gray-800"
             >
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{item.label}</p>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-white">{item.value}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{item.value}</p>
                 </div>
-                <div className={`p-2 rounded-xl bg-gradient-to-r ${item.color} text-white`}>
+                <div className={`p-2 rounded-lg bg-gradient-to-r ${item.color} text-white`}>
                   <item.icon size={18} />
                 </div>
               </div>
@@ -263,8 +268,8 @@ const Reminders: React.FC = () => {
         />
 
         {/* Overdue Section with "Send All" button */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-4 border-b border-white/30 dark:border-gray-700 pb-2">
+        <div className="mb-7">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3 border-b border-gray-200 dark:border-gray-800 pb-3">
             <div className="flex items-center gap-2">
               <FiAlertCircle className="text-red-600" size={22} />
               <h2 className="text-xl font-bold text-gray-800 dark:text-white">Overdue Loans</h2>
@@ -277,7 +282,7 @@ const Reminders: React.FC = () => {
             {overdueReminders.length > 0 && (
               <button
                 onClick={sendAllOverdueNotifications}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm rounded-xl hover:bg-red-700 transition shadow-md"
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition shadow-sm"
               >
                 <FiMessageSquare size={16} /> Send All Notifications
               </button>
@@ -286,7 +291,7 @@ const Reminders: React.FC = () => {
           {overdueReminders.length === 0 ? (
             <EmptyState message="No overdue loans" />
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {overdueReminders.map((user) => (
                 <ReminderCard
                   key={user._id || user.id}
@@ -354,8 +359,8 @@ const ReminderSection: React.FC<{
   sendSMS,
   navigate,
 }) => (
-  <div className="mb-10">
-    <div className="flex items-center gap-2 mb-4 border-b border-white/30 pb-2">
+  <div className="mb-7">
+    <div className="flex items-center gap-2 mb-3 border-b border-gray-200 dark:border-gray-800 pb-3">
       {icon}
       <h2 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h2>
       {users.length > 0 && (
@@ -365,9 +370,9 @@ const ReminderSection: React.FC<{
       )}
     </div>
     {users.length === 0 ? (
-      <EmptyState message={`No ${title.toLowerCase()} reminders`} />
+      <EmptyState message={`No ${title.toLowerCase()}`} />
     ) : (
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {users.map((user) => (
           <ReminderCard
             key={user._id || user.id}
@@ -431,7 +436,7 @@ const ReminderCard: React.FC<{
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/50 dark:border-gray-700 transition-all duration-200"
+      className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-800 transition-all duration-200"
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -542,9 +547,9 @@ const ReminderCard: React.FC<{
 };
 
 const EmptyState: React.FC<{ message: string }> = ({ message }) => (
-  <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/40 dark:border-gray-700">
-    <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-    <p className="text-gray-600 dark:text-gray-300">{message}</p>
+  <div className="bg-white dark:bg-gray-900 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-800">
+    <FiCheckCircle className="h-10 w-10 text-green-500 mx-auto mb-2" />
+    <p className="text-sm text-gray-600 dark:text-gray-300">{message}</p>
   </div>
 );
 

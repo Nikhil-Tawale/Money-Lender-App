@@ -131,16 +131,16 @@ const UserDetails: React.FC = () => {
       : "from-green-500 to-emerald-500";
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-4 py-5 transition-colors duration-300">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-indigo-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 px-2 sm:px-4 py-3 sm:py-5 transition-colors duration-300">
 
       <div className="max-w-4xl mx-auto">
 
         {/* HEADER */}
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-4">
           <button
             onClick={() => navigate("/")}
             aria-label="Back to dashboard"
-            className="p-3 rounded-xl bg-white dark:bg-gray-800 shadow hover:scale-105 transition dark:text-white"
+            className="min-h-11 min-w-11 p-2.5 rounded-xl bg-white dark:bg-gray-800 shadow hover:scale-105 transition dark:text-white"
           >
             <FiArrowLeft />
           </button>
@@ -281,7 +281,7 @@ const UserDetails: React.FC = () => {
         >
           <form
             onSubmit={handleAddPayment}
-            className="w-full max-w-lg bg-white dark:bg-gray-900 p-6 sm:p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700"
+            className="w-full max-w-lg bg-white dark:bg-gray-900 p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700"
           >
             <div className="mb-7 flex items-center gap-4">
               <button

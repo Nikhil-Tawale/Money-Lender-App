@@ -153,7 +153,7 @@ const InterestCalculator: React.FC = () => {
       <div className="w-full">
 
         {/* MAIN CARD */}
-        <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/30 dark:border-slate-700 shadow-2xl rounded-3xl p-5 sm:p-8 space-y-6">
+        <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/30 dark:border-slate-700 shadow-2xl rounded-2xl p-3 sm:p-5 md:p-8 space-y-5">
 
           {/* ERROR */}
           {calculationError && (
@@ -164,7 +164,7 @@ const InterestCalculator: React.FC = () => {
           )}
 
           {/* INPUT GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 
             {/* Amount */}
             <div>
@@ -268,7 +268,7 @@ const InterestCalculator: React.FC = () => {
           </div>
 
           {/* RESULT */}
-          <div className="rounded-3xl p-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl hover:scale-[1.02] transition">
+          <div className="rounded-2xl p-4 sm:p-5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl transition">
             <h2 className="text-lg font-semibold mb-3">Result</h2>
 
             <div className="space-y-2 text-sm">

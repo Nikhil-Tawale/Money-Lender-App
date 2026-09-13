@@ -202,11 +202,11 @@ const EditUser: React.FC = () => {
   }
 
   return (
-    <div className="edit-user-page fixed inset-0 z-40 flex items-center justify-center bg-black/45 p-3 sm:p-6 backdrop-blur-sm">
+    <div className="edit-user-page fixed inset-0 z-40 flex items-start sm:items-center justify-center bg-black/45 p-2 sm:p-6 backdrop-blur-sm">
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="relative w-full max-w-3xl max-h-[calc(100vh-1.5rem)] overflow-y-auto bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-4 md:p-6 space-y-4 border border-gray-200 dark:border-gray-700"
+        className="relative w-full max-w-3xl max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-3rem)] overflow-y-auto bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-3 sm:p-4 md:p-6 space-y-4 border border-gray-200 dark:border-gray-700"
       >
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-3">
           <div>
