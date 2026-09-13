@@ -31,9 +31,9 @@ function AppRoutes() {
       <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
       <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
       <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/add-user" element={<PrivateRoute><AddUser /></PrivateRoute>} />
+      <Route path="/add-user" element={<PrivateRoute><Dashboard><AddUser /></Dashboard></PrivateRoute>} />
       <Route path="/edit-user/:id" element={<PrivateRoute><EditUser /></PrivateRoute>} />
-      <Route path="/interest-calculator" element={<PrivateRoute><InterestCalculator /></PrivateRoute>} />
+      <Route path="/interest-calculator" element={<PrivateRoute><Dashboard><InterestCalculator /></Dashboard></PrivateRoute>} />
       <Route path="/user/:id" element={<PrivateRoute><UserDetails /></PrivateRoute>} />
       <Route path="/reminders" element={<PrivateRoute><Reminders /></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" />} />

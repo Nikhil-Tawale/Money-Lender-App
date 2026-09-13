@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTheme } from '../contexts/ThemeContext';
 import {
-  FiArrowLeft,
   FiBell
 } from 'react-icons/fi';
 import { dataService } from '../services/DataServiceFactory';
@@ -108,22 +107,8 @@ const AddUser: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
 
-      {/* Header */}
-      <div className="max-w-6xl mx-auto px-4 py-6 flex items-center gap-4">
-        <button
-          onClick={() => navigate('/')}
-          className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition dark:text-white"
-        >
-          <FiArrowLeft />
-        </button>
-
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
-          ➕ Add Borrower
-        </h1>
-      </div>
-
       {/* Form */}
-      <div className="max-w-6xl mx-auto px-4 pb-10">
+      <div className="w-full pb-10">
         <form
           onSubmit={handleSubmit}
           className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-6 md:p-10 rounded-3xl shadow-2xl border border-white/40 dark:border-gray-700/40 space-y-8"

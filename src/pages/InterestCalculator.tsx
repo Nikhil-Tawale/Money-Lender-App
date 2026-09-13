@@ -1,12 +1,10 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import {
   FiPercent,
   FiCalendar,
   FiRepeat,
   FiAlertCircle,
-  FiArrowLeft,
 } from "react-icons/fi";
 import { MdCurrencyRupee } from "react-icons/md";
 import { helperService } from "../services/HelperService";
@@ -33,7 +31,6 @@ const InterestCalculator: React.FC = () => {
     returnDate: "",
   });
 
-  const navigate = useNavigate();
   const numericAmount = parseFloat(amount) || 0;
   const numericRate = parseFloat(interestRate) || 0;
   const numericPeriods = parseInt(periods, 10) || 0;
@@ -153,23 +150,7 @@ const InterestCalculator: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-blue-50 to-purple-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all">
-
-      {/* HEADER */}
-      <div className="sticky top-0 z-20 backdrop-blur-xl bg-white/60 dark:bg-slate-800/60 border-b border-white/30 dark:border-slate-700">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center">
-          <button
-            onClick={() => navigate("/")}
-            className="p-2 rounded-lg hover:bg-white/50 dark:hover:bg-slate-700 transition"
-          >
-            <FiArrowLeft size={20} />
-          </button>
-          <h1 className="ml-3 text-xl sm:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Interest Calculator
-          </h1>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto p-4 sm:p-6">
+      <div className="w-full">
 
         {/* MAIN CARD */}
         <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-xl border border-white/30 dark:border-slate-700 shadow-2xl rounded-3xl p-5 sm:p-8 space-y-6">

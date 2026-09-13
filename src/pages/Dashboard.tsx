@@ -34,7 +34,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState({
     totalBorrowed: 0,
@@ -47,6 +47,7 @@ const Dashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
 
   const { logout, user } = useAuth();
@@ -86,6 +87,14 @@ const Dashboard: React.FC = () => {
 
   const currencySymbol = helperService.getCurrencySymbol();
   const CurrencyIcon = helperService.getCurrencyIcon();
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const filteredUsers = normalizedSearchQuery
+    ? users.filter((borrower) =>
+        [borrower.name, borrower.phone, borrower.email].some((value) =>
+          value?.toLowerCase().includes(normalizedSearchQuery),
+        ),
+      )
+    : users;
 
   const chartData = [
     { name: "Borrowed", value: stats.totalBorrowed, color: "#F59E0B" },
@@ -247,16 +256,8 @@ const Dashboard: React.FC = () => {
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col pt-20 md:pt-0 overflow-x-hidden min-h-screen">
         {/* HEADER */}
-        <header className="sticky top-0 z-20 flex justify-between items-center p-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-          <div className="flex items-center bg-white dark:bg-gray-800/50 px-5 py-2.5 rounded-2xl w-full max-w-md shadow-inner border border-gray-200/50 dark:border-gray-700/50 focus-within:ring-2 focus-within:ring-indigo-500/50 transition-all">
-            <FiSearch className="mr-3 text-gray-400 text-lg" />
-            <input
-              className="bg-transparent outline-none w-full text-gray-700 dark:text-gray-200 placeholder-gray-400"
-              placeholder="Search borrowers..."
-            />
-          </div>
-
-          <div className="flex items-center gap-3 ml-4">
+        <header className="sticky top-0 z-20 flex justify-end items-center p-4 bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm">
+          <div className="flex items-center gap-3">
             <button
               onClick={toggleDarkMode}
               className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:scale-105 transition-transform"
@@ -331,8 +332,9 @@ const Dashboard: React.FC = () => {
           </div>
         </header>
 
-        {/* MAIN CONTENT AREA - unchanged from your original */}
-        <main className="p-4 md:p-8 space-y-8">
+        {/* MAIN CONTENT AREA */}
+        <main className={children ? "p-4 md:p-8" : "p-4 md:p-8 space-y-8"}>
+          {children || <>
           {/* KPI CARDS */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -551,7 +553,7 @@ const Dashboard: React.FC = () => {
             className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-800/50 overflow-hidden"
           >
             <div className="p-5 border-b border-gray-200/50 dark:border-gray-800/50">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
                 <div>
                   <h2 className="text-xl font-bold text-gray-800 dark:text-white">
                     Active Borrowers
@@ -560,12 +562,23 @@ const Dashboard: React.FC = () => {
                     Manage and track all registered borrowers
                   </p>
                 </div>
-                <Link
-                  to="/add-user"
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all hover:scale-105"
-                >
-                  + Add New
-                </Link>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <div className="flex items-center bg-white dark:bg-gray-800/50 px-4 py-2.5 rounded-2xl w-full sm:w-64 shadow-inner border border-gray-200/50 dark:border-gray-700/50 focus-within:ring-2 focus-within:ring-indigo-500/50 transition-all">
+                    <FiSearch className="mr-3 text-gray-400 text-lg" />
+                    <input
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                      className="bg-transparent outline-none w-full text-gray-700 dark:text-gray-200 placeholder-gray-400"
+                      placeholder="Search borrowers..."
+                    />
+                  </div>
+                  <Link
+                    to="/add-user"
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all hover:scale-105 text-center"
+                  >
+                    + Add New
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -578,7 +591,7 @@ const Dashboard: React.FC = () => {
                   </p>
                 </div>
               </div>
-            ) : users.length === 0 ? (
+            ) : filteredUsers.length === 0 ? (
               <div className="p-12 text-center">
                 <div className="w-20 h-20 mx-auto bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                   <FiUsers className="text-3xl text-gray-400" />
@@ -595,7 +608,7 @@ const Dashboard: React.FC = () => {
               </div>
             ) : (
               <div className="divide-y divide-gray-200/50 dark:divide-gray-800/50">
-                {users.map((u, idx) => (
+                {filteredUsers.map((u, idx) => (
                   <motion.div
                     key={u._id || u.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -608,6 +621,7 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </motion.div>
+          </>}
         </main>
       </div>
     </div>
