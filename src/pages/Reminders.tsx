@@ -6,7 +6,6 @@ import {
   FiCalendar,
   FiCheckCircle,
   FiAlertCircle,
-  FiArrowLeft,
   FiMail,
   FiMessageSquare,
   FiPhone
@@ -202,30 +201,7 @@ const Reminders: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header with back button */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => navigate("/")}
-            className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition dark:text-white"
-          >
-            <FiArrowLeft />
-          </button>
-          <div className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl shadow-2xl border border-white/40 dark:border-gray-700/40 flex-1 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-                Reminders Dashboard
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Track dues, overdue & reminders
-              </p>
-            </div>
-            <div className="p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg">
-              <FiBell size={24} />
-            </div>
-          </div>
-        </div>
-
+      <div className="w-full">
         {/* KPI summary cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
@@ -381,7 +357,7 @@ const ReminderSection: React.FC<{
   <div className="mb-10">
     <div className="flex items-center gap-2 mb-4 border-b border-white/30 pb-2">
       {icon}
-      <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h2>
       {users.length > 0 && (
         <span className="bg-indigo-500 text-white text-xs px-2 py-1 rounded-full">
           {users.length}
@@ -455,7 +431,7 @@ const ReminderCard: React.FC<{
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
-      className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/50 transition-all duration-200"
+      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-white/50 dark:border-gray-700 transition-all duration-200"
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -463,8 +439,8 @@ const ReminderCard: React.FC<{
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 className="font-bold text-gray-800">{user.name}</h3>
-            {user.phone && <p className="text-xs text-gray-500">{user.phone}</p>}
+            <h3 className="font-bold text-gray-800 dark:text-white">{user.name}</h3>
+            {user.phone && <p className="text-xs text-gray-500 dark:text-gray-400">{user.phone}</p>}
           </div>
         </div>
         <span className={`text-xs px-2 py-1 rounded-full font-semibold ${styles.badge}`}>
@@ -474,21 +450,21 @@ const ReminderCard: React.FC<{
 
       <div className="border-t border-gray-200/50 pt-3 mt-2 space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-500">Borrowed:</span>
-          <span className="font-semibold text-gray-800">
+          <span className="text-gray-500 dark:text-gray-400">Borrowed:</span>
+          <span className="font-semibold text-gray-800 dark:text-gray-200">
             {currencySymbol}{user.borrowedAmount.toLocaleString()}
           </span>
         </div>
         {user.returnDate && (
           <div className="flex justify-between">
-            <span className="text-gray-500">Return date:</span>
+            <span className="text-gray-500 dark:text-gray-400">Return date:</span>
             <span className={`font-medium ${styles.text}`}>
               {new Date(user.returnDate).toLocaleDateString()}
             </span>
           </div>
         )}
         <div className="flex justify-between">
-          <span className="text-gray-500">Total due:</span>
+          <span className="text-gray-500 dark:text-gray-400">Total due:</span>
           <span className="font-bold text-red-600">
             {currencySymbol}{calculateTotal(user).toLocaleString()}
           </span>
@@ -496,13 +472,13 @@ const ReminderCard: React.FC<{
       </div>
 
       {type === "due" && (
-        <div className="mt-3 p-2 bg-orange-100 rounded-lg text-center">
-          <p className="text-xs text-orange-800">⚠️ Due soon! Collect the money.</p>
+          <div className="mt-3 p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-center">
+          <p className="text-xs text-orange-800 dark:text-orange-200">⚠️ Due soon! Collect the money.</p>
         </div>
       )}
       {type === "overdue" && (
-        <div className="mt-3 p-2 bg-red-100 rounded-lg text-center">
-          <p className="text-xs text-red-800">❌ Overdue! Immediate action required.</p>
+        <div className="mt-3 p-2 bg-red-100 dark:bg-red-900/30 rounded-lg text-center">
+          <p className="text-xs text-red-800 dark:text-red-200">❌ Overdue! Immediate action required.</p>
         </div>
       )}
 
@@ -566,9 +542,9 @@ const ReminderCard: React.FC<{
 };
 
 const EmptyState: React.FC<{ message: string }> = ({ message }) => (
-  <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/40">
+  <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-2xl p-8 text-center border border-white/40 dark:border-gray-700">
     <FiCheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
-    <p className="text-gray-600">{message}</p>
+    <p className="text-gray-600 dark:text-gray-300">{message}</p>
   </div>
 );
 

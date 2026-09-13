@@ -6,6 +6,34 @@
   body {
     @apply bg-gray-50 dark:bg-gray-950 transition-colors duration-300;
   }
+
+  html.dark input,
+  html.dark select,
+  html.dark textarea {
+    @apply text-gray-100;
+    color-scheme: dark;
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    @apply text-gray-400;
+  }
+
+  html.dark option {
+    @apply bg-gray-800 text-gray-100;
+  }
+
+  html.dark label {
+    @apply text-gray-200;
+  }
+
+  body:has(.edit-user-page) {
+    scrollbar-width: none;
+  }
+
+  body:has(.edit-user-page)::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer components {

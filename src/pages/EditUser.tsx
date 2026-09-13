@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import toast from 'react-hot-toast';
 import {
-  FiArrowLeft,
   FiUser,
   FiPhone,
   FiMail,
@@ -11,6 +10,7 @@ import {
   FiPercent,
   FiBell,
   FiAlertCircle,
+  FiX,
 } from 'react-icons/fi';
 import { dataService } from '../services/DataServiceFactory';
 import { helperService } from '../services/HelperService';
@@ -202,27 +202,26 @@ const EditUser: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4 transition-colors duration-300">
-
-      {/* Header */}
-      <div className="max-w-5xl mx-auto flex items-center gap-4 py-6">
-        <button
-          onClick={() => navigate(`/user/${id}`)}
-          className="p-3 bg-white dark:bg-gray-800 rounded-full shadow hover:scale-105 transition dark:text-white"
-        >
-          <FiArrowLeft />
-        </button>
-
-        <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-          ✏️ Edit Borrower
-        </h1>
-      </div>
-
+    <div className="edit-user-page fixed inset-0 z-40 flex items-center justify-center bg-black/45 p-3 sm:p-6 backdrop-blur-sm">
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="max-w-5xl mx-auto bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-2xl rounded-3xl p-6 md:p-10 space-y-8 border border-white/40 dark:border-gray-700/40"
+        className="relative w-full max-w-3xl max-h-[calc(100vh-1.5rem)] overflow-y-auto bg-white dark:bg-gray-900 shadow-2xl rounded-2xl p-4 md:p-6 space-y-4 border border-gray-200 dark:border-gray-700"
       >
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-3">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">User management</p>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Edit Borrower</h1>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate(`/user/${id}`)}
+            aria-label="Close edit form"
+            className="p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition"
+          >
+            <FiX />
+          </button>
+        </div>
 
         {calculationError && (
           <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300">
@@ -232,9 +231,10 @@ const EditUser: React.FC = () => {
         )}
 
         {/* BASIC INFO */}
-        <div className="bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl shadow-inner space-y-4">
-          <h2 className="font-semibold dark:text-gray-200">👤 Basic Info</h2>
+        <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-xl shadow-inner space-y-3">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">👤 Basic Info</h2>
 
+          <div className="grid md:grid-cols-2 gap-3">
           {[
             { name: 'name', icon: FiUser, placeholder: 'Name' },
             { name: 'phone', icon: FiPhone, placeholder: 'Phone' },
@@ -243,13 +243,13 @@ const EditUser: React.FC = () => {
             const Icon = f.icon;
             return (
               <div key={f.name} className="relative">
-                <Icon className="absolute left-3 top-3 text-gray-400" />
+                <Icon className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" />
                 <input
                   name={f.name}
                   value={(formData as any)[f.name]}
                   onChange={handleChange}
                   placeholder={f.placeholder}
-                  className="w-full pl-10 p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
+                  className="w-full pl-10 p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
                 />
                 {(validationErrors as any)[f.name] && (
                   <p className="text-red-500 dark:text-red-400 text-xs">{(validationErrors as any)[f.name]}</p>
@@ -257,6 +257,7 @@ const EditUser: React.FC = () => {
               </div>
             );
           })}
+          </div>
 
           <div className="relative">
             <FiMapPin className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" />
@@ -264,17 +265,17 @@ const EditUser: React.FC = () => {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full pl-10 p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
+              className="w-full pl-10 p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
               placeholder="Address"
             />
           </div>
         </div>
 
         {/* LOAN */}
-        <div className="bg-white/60 dark:bg-gray-800/60 p-5 rounded-2xl shadow-inner space-y-4">
-          <h2 className="font-semibold dark:text-gray-200">💰 Loan Details</h2>
+        <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-xl shadow-inner space-y-3">
+          <h2 className="font-semibold text-gray-700 dark:text-gray-200">💰 Loan Details</h2>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3">
 
             <div className="relative">
               <CurrencyIcon className="absolute left-3 top-3 text-gray-400 dark:text-gray-500" />
@@ -282,7 +283,7 @@ const EditUser: React.FC = () => {
                 name="borrowedAmount"
                 value={formData.borrowedAmount}
                 onChange={handleChange}
-                className="w-full pl-10 p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
+                className="w-full pl-10 p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
                 placeholder="Amount"
               />
             </div>
@@ -293,13 +294,13 @@ const EditUser: React.FC = () => {
                 name="interestRate"
                 value={formData.interestRate}
                 onChange={handleChange}
-                className="w-full pl-10 p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
+                className="w-full pl-10 p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition"
                 placeholder="Interest"
               />
             </div>
 
-            <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition" />
-            <input type="date" name="returnDate" value={formData.returnDate} onChange={handleChange} className="p-3 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition" />
+            <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition" />
+            <input type="date" name="returnDate" value={formData.returnDate} onChange={handleChange} className="p-2.5 rounded-xl border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-400 transition" />
           </div>
         </div>
 
