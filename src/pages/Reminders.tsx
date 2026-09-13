@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import {
   FiBell,
   FiCalendar,
@@ -23,6 +24,7 @@ type FilterType = "all" | "today" | "dueSoon" | "overdue" | "upcoming";
 
 const Reminders: React.FC = () => {
   useTheme();
+  const { t } = useLanguage();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [todayReminders, setTodayReminders] = useState<User[]>([]);
@@ -197,11 +199,11 @@ const Reminders: React.FC = () => {
 
   // Filter Tabs Config
   const filterTabs: { id: FilterType; label: string; count: number; color: string }[] = useMemo(() => [
-    { id: "all", label: "All", count: todayReminders.length + dueSoonReminders.length + overdueReminders.length + upcomingReminders.length, color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-400" },
-    { id: "overdue", label: "Overdue", count: overdueReminders.length, color: "text-rose-600 bg-rose-50 dark:bg-rose-900/30 dark:text-rose-400" },
-    { id: "today", label: "Today", count: todayReminders.length, color: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400" },
-    { id: "dueSoon", label: "Due Soon", count: dueSoonReminders.length, color: "text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400" },
-    { id: "upcoming", label: "Upcoming", count: upcomingReminders.length, color: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400" },
+    { id: "all", label: t("all"), count: todayReminders.length + dueSoonReminders.length + overdueReminders.length + upcomingReminders.length, color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-400" },
+    { id: "overdue", label: t("overdue"), count: overdueReminders.length, color: "text-rose-600 bg-rose-50 dark:bg-rose-900/30 dark:text-rose-400" },
+    { id: "today", label: t("today"), count: todayReminders.length, color: "text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400" },
+    { id: "dueSoon", label: t("dueSoon"), count: dueSoonReminders.length, color: "text-orange-600 bg-orange-50 dark:bg-orange-900/30 dark:text-orange-400" },
+    { id: "upcoming", label: t("upcoming"), count: upcomingReminders.length, color: "text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400" },
   ], [todayReminders, dueSoonReminders, overdueReminders, upcomingReminders]);
 
   // Determine which sections to show based on filter
@@ -217,7 +219,7 @@ const Reminders: React.FC = () => {
       <div className="min-h-[100dvh] flex items-center justify-center bg-slate-50 dark:bg-gray-950">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-          <p className="text-slate-500 dark:text-gray-400 font-medium">Loading reminders...</p>
+              <p className="text-slate-500 dark:text-gray-400 font-medium">{t("loading")}</p>
         </div>
       </div>
     );
@@ -238,7 +240,7 @@ const Reminders: React.FC = () => {
                 Reminders
               </h1>
               <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
-                Stay ahead of upcoming payments and overdue loans.
+                {t("reminderPreferencesDesc")}
               </p>
             </div>
           </div>
@@ -248,7 +250,7 @@ const Reminders: React.FC = () => {
               onClick={sendAllOverdueNotifications}
               className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-rose-500 to-red-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all"
             >
-              <FiZap className="w-4 h-4" /> Send All Overdue
+                <FiZap className="w-4 h-4" /> {t("sendAllOverdue")}
             </button>
           )}
         </div>
@@ -256,10 +258,10 @@ const Reminders: React.FC = () => {
         {/* KPI SUMMARY CARDS (Clickable filters) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[
-            { id: "today" as FilterType, label: "Today", value: todayReminders.length, color: "from-amber-400 to-orange-500", bg: "bg-amber-50 dark:bg-amber-900/20", border: "border-amber-100 dark:border-amber-900/50", icon: FiBell },
-            { id: "dueSoon" as FilterType, label: "Due Soon", value: dueSoonReminders.length, color: "from-orange-500 to-red-500", bg: "bg-orange-50 dark:bg-orange-900/20", border: "border-orange-100 dark:border-orange-900/50", icon: FiAlertCircle },
-            { id: "overdue" as FilterType, label: "Overdue", value: overdueReminders.length, color: "from-rose-500 to-pink-600", bg: "bg-rose-50 dark:bg-rose-900/20", border: "border-rose-100 dark:border-rose-900/50", icon: FiAlertCircle },
-            { id: "upcoming" as FilterType, label: "Upcoming", value: upcomingReminders.length, color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-100 dark:border-blue-900/50", icon: FiCalendar },
+            { id: "today" as FilterType, label: t("today"), value: todayReminders.length, color: "from-amber-400 to-orange-500", bg: "bg-amber-50 dark:bg-amber-900/20", border: "border-amber-100 dark:border-amber-900/50", icon: FiBell },
+            { id: "dueSoon" as FilterType, label: t("dueSoon"), value: dueSoonReminders.length, color: "from-orange-500 to-red-500", bg: "bg-orange-50 dark:bg-orange-900/20", border: "border-orange-100 dark:border-orange-900/50", icon: FiAlertCircle },
+            { id: "overdue" as FilterType, label: t("overdue"), value: overdueReminders.length, color: "from-rose-500 to-pink-600", bg: "bg-rose-50 dark:bg-rose-900/20", border: "border-rose-100 dark:border-rose-900/50", icon: FiAlertCircle },
+            { id: "upcoming" as FilterType, label: t("upcoming"), value: upcomingReminders.length, color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-100 dark:border-blue-900/50", icon: FiCalendar },
           ].map((item, idx) => (
             <motion.button
               key={idx}
@@ -321,8 +323,8 @@ const Reminders: React.FC = () => {
             <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <FiCheckCircle className="w-8 h-8 text-emerald-500" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">All caught up!</h3>
-            <p className="text-sm text-slate-500 dark:text-gray-400">You have no pending reminders at the moment.</p>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">{t("allCaughtUp")}</h3>
+            <p className="text-sm text-slate-500 dark:text-gray-400">{t("allCaughtUpDesc")}</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -330,7 +332,7 @@ const Reminders: React.FC = () => {
               {showOverdue && overdueReminders.length > 0 && (
                 <SectionWrapper
                   key="overdue"
-                  title="Overdue Loans"
+                  title={t("overdueLoans")}
                   subtitle="Immediate action required"
                   count={overdueReminders.length}
                   icon={<FiAlertCircle className="w-5 h-5" />}
@@ -357,8 +359,8 @@ const Reminders: React.FC = () => {
               {showToday && todayReminders.length > 0 && (
                 <SectionWrapper
                   key="today"
-                  title="Today's Reminders"
-                  subtitle="Scheduled for today"
+                  title={t("todaysReminders")}
+                  subtitle={t("scheduledToday")}
                   count={todayReminders.length}
                   icon={<FiBell className="w-5 h-5" />}
                   accentColor="amber"
@@ -384,8 +386,8 @@ const Reminders: React.FC = () => {
               {showDueSoon && dueSoonReminders.length > 0 && (
                 <SectionWrapper
                   key="dueSoon"
-                  title="Due in 3 Days"
-                  subtitle="Prepare for collection"
+                  title={t("dueIn3Days")}
+                  subtitle={t("prepareCollection")}
                   count={dueSoonReminders.length}
                   icon={<FiCalendar className="w-5 h-5" />}
                   accentColor="orange"
@@ -411,8 +413,8 @@ const Reminders: React.FC = () => {
               {showUpcoming && upcomingReminders.length > 0 && (
                 <SectionWrapper
                   key="upcoming"
-                  title="Upcoming Return Dates"
-                  subtitle="Next 7 days"
+                  title={t("upcomingReturns")}
+                  subtitle={t("nextSevenDays")}
                   count={upcomingReminders.length}
                   icon={<FiCalendar className="w-5 h-5" />}
                   accentColor="blue"

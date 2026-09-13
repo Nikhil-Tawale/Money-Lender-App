@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -11,6 +12,7 @@ import EditUser from './pages/EditUser';
 import InterestCalculator from './pages/InterestCalculator';
 import UserDetails from './pages/UserDetails';
 import Reminders from './pages/Reminders';
+import Settings from './pages/Settings';
 import './index.css';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -36,6 +38,7 @@ function AppRoutes() {
       <Route path="/interest-calculator" element={<PrivateRoute><Dashboard><InterestCalculator /></Dashboard></PrivateRoute>} />
       <Route path="/user/:id" element={<PrivateRoute><Dashboard><UserDetails /></Dashboard></PrivateRoute>} />
       <Route path="/reminders" element={<PrivateRoute><Dashboard><Reminders /></Dashboard></PrivateRoute>} />
+      <Route path="/settings" element={<PrivateRoute><Dashboard><Settings /></Dashboard></PrivateRoute>} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
@@ -44,12 +47,14 @@ function AppRoutes() {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <Toaster position="top-right" />
-          <AppRoutes />
-        </Router>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <Router>
+            <Toaster position="top-right" />
+            <AppRoutes />
+          </Router>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

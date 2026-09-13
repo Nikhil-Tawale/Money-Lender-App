@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import {
   FiPercent,
   FiCalendar,
@@ -15,6 +16,7 @@ import { helperService } from "../services/HelperService";
 
 const InterestCalculator: React.FC = () => {
   useTheme();
+  const { t } = useLanguage();
   const [amount, setAmount] = useState("");
   const [interestRate, setInterestRate] = useState("");
   const [frequency, setFrequency] = useState<
@@ -168,10 +170,10 @@ const InterestCalculator: React.FC = () => {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Interest Calculator
+              {t("calculator")}
             </h1>
             <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
-              Calculate loan interest and totals across any time period.
+              {t("calculateSubtitle")}
             </p>
           </div>
         </div>
@@ -196,7 +198,7 @@ const InterestCalculator: React.FC = () => {
                 <div className="p-1.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
                   <MdCurrencyRupee className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-slate-800 dark:text-white">Loan Inputs</h2>
+                <h2 className="font-semibold text-slate-800 dark:text-white">{t("loanDetails")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -204,7 +206,7 @@ const InterestCalculator: React.FC = () => {
                 {/* Amount */}
                 <div>
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">
-                    Borrowed Amount
+                    {t("borrowedAmount")}
                   </label>
                   <div className="relative">
                     <MdCurrencyRupee className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
@@ -228,7 +230,7 @@ const InterestCalculator: React.FC = () => {
                 {/* Interest Rate */}
                 <div>
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">
-                    Interest Rate (%)
+                    {t("interestRate")}
                   </label>
                   <div className="relative">
                     <FiPercent className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
@@ -252,17 +254,17 @@ const InterestCalculator: React.FC = () => {
                 {/* Frequency */}
                 <div>
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">
-                    Frequency
+                    {t("frequency")}
                   </label>
                   <select
                     value={frequency}
                     onChange={(e) => setFrequency(e.target.value as any)}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
+                    <option value="daily">{t("daily")}</option>
+                    <option value="weekly">{t("weekly")}</option>
+                    <option value="monthly">{t("monthly")}</option>
+                    <option value="yearly">{t("yearly")}</option>
                   </select>
                 </div>
 
@@ -294,7 +296,7 @@ const InterestCalculator: React.FC = () => {
               <div className="mt-6 pt-5 border-t border-slate-100 dark:border-gray-800">
                 <div className="flex justify-between items-center mb-3">
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">
-                    Quick Adjust Interest Rate
+                    {t("quickAdjustInterest")}
                   </label>
                   <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-md">
                     {interestRate || 0}%
@@ -325,13 +327,13 @@ const InterestCalculator: React.FC = () => {
                 <div className="p-1.5 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
                   <FiCalendar className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-slate-800 dark:text-white">Timeline</h2>
+                <h2 className="font-semibold text-slate-800 dark:text-white">{t("duration")}</h2>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">
-                    Start Date
+                    {t("startDate")}
                   </label>
                   <div className="relative">
                     <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
@@ -346,7 +348,7 @@ const InterestCalculator: React.FC = () => {
 
                 <div>
                   <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">
-                    Return Date (Optional)
+                    {t("returnDateOptional")}
                   </label>
                   <div className="relative">
                     <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />

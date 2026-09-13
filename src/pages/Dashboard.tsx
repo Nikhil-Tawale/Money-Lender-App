@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import {
   FiLogOut,
   FiBell,
@@ -9,8 +10,6 @@ import {
   FiUsers,
   FiHome,
   FiSearch,
-  FiMoon,
-  FiSun,
   FiX,
   FiTrendingUp,
   FiUserPlus,
@@ -54,9 +53,12 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chartReady, setChartReady] = useState(false);
 
   const { logout, user } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { darkMode } = useTheme();
+  const { t } = useLanguage();
   const location = useLocation();
 
   useEffect(() => {
@@ -72,6 +74,20 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (children || !chartContainerRef.current) return;
+
+    const chartContainer = chartContainerRef.current;
+    const updateChartReady = () => {
+      setChartReady(chartContainer.clientWidth > 0 && chartContainer.clientHeight > 0);
+    };
+    const observer = new ResizeObserver(updateChartReady);
+    observer.observe(chartContainer);
+    updateChartReady();
+
+    return () => observer.disconnect();
+  }, [children]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -179,10 +195,11 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 
         {/* Nav */}
         <nav className="flex flex-col gap-1">
-          {navItem("/", <FiHome />, "Dashboard")}
-          {navItem("/add-user", <FiUserPlus />, "Add User")}
-          {navItem("/interest-calculator", <FiRepeat />, "Calculator")}
-          {navItem("/reminders", <FiBell />, "Reminders")}
+          {navItem("/", <FiHome />, t("dashboard"))}
+          {navItem("/add-user", <FiUserPlus />, t("addUser"))}
+          {navItem("/interest-calculator", <FiRepeat />, t("calculator"))}
+          {navItem("/reminders", <FiBell />, t("reminders"))}
+          {navItem("/settings", <FiSettings />, t("settings"))}
         </nav>
       </div>
 
@@ -194,7 +211,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           className="p-3 rounded-xl bg-white/5 border border-white/10"
         >
           <p className="text-[10px] uppercase tracking-widest text-white/50 font-semibold">
-            Signed in as
+            {t("signedInAs")}
           </p>
           <p className="text-xs text-white/90 font-medium mt-1 truncate">
             {user?.email || "user@lendflow.app"}
@@ -257,13 +274,6 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             <FiBell />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-rose-500" />
           </Link>
-          <button
-            onClick={toggleDarkMode}
-            aria-label="Toggle dark mode"
-            className="min-h-11 min-w-11 p-2 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-200"
-          >
-            {darkMode ? <FiSun /> : <FiMoon />}
-          </button>
         </div>
       </div>
 
@@ -333,14 +343,6 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleDarkMode}
-              aria-label="Toggle dark mode"
-              className="p-2.5 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              {darkMode ? <FiSun /> : <FiMoon />}
-            </button>
-
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
@@ -379,10 +381,14 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                       </div>
                     </div>
                     <div className="p-1.5">
-                      <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 dark:text-gray-200 text-sm hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors">
+                      <Link
+                        to="/settings"
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-700 dark:text-gray-200 text-sm hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors"
+                      >
                         <FiSettings className="text-base" />
-                        <span>Settings</span>
-                      </button>
+                        <span>{t("settings")}</span>
+                      </Link>
                       <button
                         onClick={() => {
                           setProfileOpen(false);
@@ -417,7 +423,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     Overview
                   </h1>
                   <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
-                    Track your lending performance at a glance.
+                    {t("trackOverview")}
                   </p>
                 </div>
               </div>
@@ -426,7 +432,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   {
-                    label: "Total Borrowed",
+                    label: t("totalBorrowed"),
                     value: stats.totalBorrowed,
                     icon: <CurrencyIcon />,
                     accent: "amber",
@@ -434,7 +440,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     trend: "up",
                   },
                   {
-                    label: "Total Received",
+                    label: t("totalReceived"),
                     value: stats.totalReceived,
                     icon: <FiTrendingUp />,
                     accent: "emerald",
@@ -442,7 +448,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     trend: "up",
                   },
                   {
-                    label: "Active Users",
+                    label: t("activeUsers"),
                     value: stats.totalUsers,
                     icon: <FiUsers />,
                     accent: "indigo",
@@ -451,7 +457,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     isCount: true,
                   },
                   {
-                    label: "Total Interest",
+                    label: t("totalInterest"),
                     value: stats.totalInterest,
                     icon: <FiPieChart />,
                     accent: "purple",
@@ -516,17 +522,17 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
                     <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-                      Financial Analytics
+                      {t("financialAnalytics")}
                     </h2>
                     <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
-                      Overview of borrowings, receipts, and interest
+                      {t("financialAnalyticsSubtitle")}
                     </p>
                   </div>
                   <div className="flex gap-3 text-xs">
                     {[
-                      { label: "Borrowed", color: "bg-amber-500" },
-                      { label: "Received", color: "bg-emerald-500" },
-                      { label: "Interest", color: "bg-violet-500" },
+                      { label: t("borrowed"), color: "bg-amber-500" },
+                      { label: t("received"), color: "bg-emerald-500" },
+                      { label: t("interest"), color: "bg-violet-500" },
                     ].map((l) => (
                       <div key={l.label} className="flex items-center gap-1.5">
                         <div className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
@@ -540,8 +546,8 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 
                 <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-stretch">
                   {/* Chart */}
-                  <div className="relative h-64 min-h-[16rem] w-full min-w-0">
-                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={220}>
+                  <div ref={chartContainerRef} className="relative h-64 min-h-[16rem] w-full min-w-0">
+                    {chartReady && <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={220}>
                       <BarChart data={chartData} margin={{ top: 8, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                           <linearGradient id="borrowedGrad" x1="0" y1="0" x2="0" y2="1">
@@ -591,14 +597,14 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                           ))}
                         </Bar>
                       </BarChart>
-                    </ResponsiveContainer>
+                    </ResponsiveContainer>}
                   </div>
 
                   {/* Right Summary Panel */}
                   <div className="flex lg:flex-col gap-3 lg:border-l lg:border-slate-100 dark:lg:border-gray-800 lg:pl-6">
                     <div className="flex-1 rounded-2xl bg-amber-50/60 dark:bg-amber-900/10 p-3 lg:p-4">
                       <p className="text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-bold">
-                        Borrowed
+                        {t("borrowed")}
                       </p>
                       <p className="text-base font-bold text-slate-800 dark:text-white mt-1">
                         {currencySymbol}
@@ -607,7 +613,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     </div>
                     <div className="flex-1 rounded-2xl bg-emerald-50/60 dark:bg-emerald-900/10 p-3 lg:p-4">
                       <p className="text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold">
-                        Received
+                        {t("received")}
                       </p>
                       <p className="text-base font-bold text-slate-800 dark:text-white mt-1">
                         {currencySymbol}
@@ -616,7 +622,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     </div>
                     <div className="flex-1 rounded-2xl bg-violet-50/60 dark:bg-violet-900/10 p-3 lg:p-4">
                       <p className="text-[10px] uppercase tracking-wider text-violet-700 dark:text-violet-400 font-bold">
-                        Interest
+                        {t("interest")}
                       </p>
                       <p className="text-base font-bold text-slate-800 dark:text-white mt-1">
                         {currencySymbol}
@@ -625,7 +631,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     </div>
                     <div className="hidden lg:flex flex-1 flex-col justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-4 text-white">
                       <p className="text-[10px] uppercase tracking-wider text-indigo-100 font-bold">
-                        Collection Rate
+                        {t("collectionRate")}
                       </p>
                       <p className="text-2xl font-bold mt-1">{collectionRate}%</p>
                       <div className="mt-2 h-1 bg-white/20 rounded-full overflow-hidden">
@@ -651,7 +657,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 <div className="p-5 border-b border-slate-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-                      Active Borrowers
+                      {t("activeBorrowers")}
                     </h2>
                     <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">
                       {filteredUsers.length} borrower{filteredUsers.length !== 1 ? "s" : ""} tracked
@@ -662,7 +668,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold shadow-md shadow-indigo-500/20 hover:scale-[1.02] transition-all"
                   >
                     <FiUserPlus className="w-4 h-4" />
-                    Add New
+                    {t("addNew")}
                   </Link>
                 </div>
 
@@ -671,7 +677,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
                       <p className="text-sm text-slate-500 dark:text-gray-400 font-medium">
-                        Loading borrowers...
+                        {t("loadingBorrowers")}
                       </p>
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   FiUser,
   FiPhone,
@@ -21,6 +22,7 @@ import { helperService } from '../services/HelperService';
 const AddUser: React.FC = () => {
   const navigate = useNavigate();
   useTheme();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
 
   const CurrencyIcon = helperService.getCurrencyIcon();
@@ -132,10 +134,10 @@ const AddUser: React.FC = () => {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Add New Borrower
+              {t("addUserButton")}
             </h1>
             <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
-              Create a new loan profile with custom terms and reminders.
+              {t("overviewSubtitle")}
             </p>
           </div>
         </div>
@@ -152,7 +154,7 @@ const AddUser: React.FC = () => {
                 <div className="p-1.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
                   <FiUser className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-slate-800 dark:text-white">Basic Information</h2>
+                <h2 className="font-semibold text-slate-800 dark:text-white">{t("basicInfo")}</h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
@@ -162,7 +164,7 @@ const AddUser: React.FC = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="Full Name *"
+                    placeholder={`${t("fullName")} *`}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
                   />
                 </div>
@@ -173,7 +175,7 @@ const AddUser: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Phone Number"
+                    placeholder={t("phone")}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
                   />
                 </div>
@@ -185,7 +187,7 @@ const AddUser: React.FC = () => {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder="Email Address"
+                    placeholder={t("email")}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
                   />
                 </div>
@@ -197,7 +199,7 @@ const AddUser: React.FC = () => {
                     rows={2}
                     value={formData.address}
                     onChange={handleChange}
-                    placeholder="Address"
+                    placeholder={t("address")}
                     className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500 resize-none"
                   />
                 </div>
@@ -210,12 +212,12 @@ const AddUser: React.FC = () => {
                 <div className="p-1.5 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
                   <FiTrendingUp className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-slate-800 dark:text-white">Loan Details</h2>
+                <h2 className="font-semibold text-slate-800 dark:text-white">{t("loanDetails")}</h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Borrowed Amount</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("borrowedAmount")}</label>
                   <div className="relative">
                     <CurrencyIcon className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                     <input
@@ -230,7 +232,7 @@ const AddUser: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Interest Rate (%)</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("interestRate")}</label>
                   <div className="relative">
                     <FiPercent className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                     <input
@@ -252,10 +254,10 @@ const AddUser: React.FC = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
+                    <option value="daily">{t("daily")}</option>
+                    <option value="weekly">{t("weekly")}</option>
+                    <option value="monthly">{t("monthly")}</option>
+                    <option value="yearly">{t("yearly")}</option>
                   </select>
                 </div>
 
@@ -274,7 +276,7 @@ const AddUser: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Return Date</label>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("returnDate")}</label>
                   <div className="relative">
                     <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                     <input
@@ -291,7 +293,7 @@ const AddUser: React.FC = () => {
               {/* INTERACTIVE INTEREST SLIDER */}
               <div className="mt-6 pt-4 border-t border-slate-100 dark:border-gray-800">
                 <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">Quick Adjust Interest Rate</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">{t("quickAdjustInterest")}</label>
                   <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-md">
                     {formData.interestRate || 0}%
                   </span>
@@ -314,7 +316,7 @@ const AddUser: React.FC = () => {
                 <div className="p-1.5 bg-violet-50 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400">
                   <FiBell className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-slate-800 dark:text-white">Reminder Settings</h2>
+                <h2 className="font-semibold text-slate-800 dark:text-white">{t("reminderSettings")}</h2>
               </div>
 
               <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-gray-800/50 rounded-2xl border border-slate-100 dark:border-gray-800">

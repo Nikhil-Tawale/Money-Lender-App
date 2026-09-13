@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import toast from 'react-hot-toast';
 import {
   FiUser,
@@ -22,6 +23,7 @@ const EditUser: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   useTheme();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [calculationError, setCalculationError] = useState('');
@@ -230,7 +232,7 @@ const EditUser: React.FC = () => {
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-gray-800 bg-slate-50/50 dark:bg-gray-900/50">
           <div>
             <p className="text-xs uppercase tracking-wider text-slate-500 dark:text-gray-400 font-semibold">User Management</p>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">Edit Borrower</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{t("edit")}</h1>
           </div>
           <button
             type="button"
@@ -263,7 +265,7 @@ const EditUser: React.FC = () => {
                   <div className="p-1.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
                     <FiUser className="w-4 h-4" />
                   </div>
-                  <h2 className="font-semibold text-slate-800 dark:text-white">Basic Information</h2>
+                  <h2 className="font-semibold text-slate-800 dark:text-white">{t("basicInfo")}</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
@@ -315,12 +317,12 @@ const EditUser: React.FC = () => {
                   <div className="p-1.5 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
                     <FiTrendingUp className="w-4 h-4" />
                   </div>
-                  <h2 className="font-semibold text-slate-800 dark:text-white">Loan Details</h2>
+                  <h2 className="font-semibold text-slate-800 dark:text-white">{t("loanDetails")}</h2>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Borrowed Amount</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("borrowedAmount")}</label>
                     <div className="relative">
                       <CurrencyIcon className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                       <input
@@ -336,7 +338,7 @@ const EditUser: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Interest Rate (%)</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("interestRate")}</label>
                     <div className="relative">
                       <FiPercent className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                       <input
@@ -366,7 +368,7 @@ const EditUser: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Return Date</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">{t("returnDate")}</label>
                     <div className="relative">
                       <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
                       <input 
@@ -383,7 +385,7 @@ const EditUser: React.FC = () => {
                 {/* Interactive Interest Slider */}
                 <div className="pt-2">
                   <div className="flex justify-between items-center mb-2">
-                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">Quick Adjust Interest</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">{t("quickAdjustInterest")}</label>
                     <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-md">
                       {formData.interestRate || 0}%
                     </span>
@@ -413,7 +415,7 @@ const EditUser: React.FC = () => {
                   <div className="p-1.5 bg-violet-50 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400">
                     <FiBell className="w-4 h-4" />
                   </div>
-                  <h2 className="font-semibold text-slate-800 dark:text-white">Reminder Settings</h2>
+                  <h2 className="font-semibold text-slate-800 dark:text-white">{t("reminderSettings")}</h2>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-gray-800/50 rounded-2xl border border-slate-100 dark:border-gray-800">
@@ -442,7 +444,7 @@ const EditUser: React.FC = () => {
 
                 {formData.enableReminder && (
                   <div className="pl-4 border-l-2 border-violet-200 dark:border-violet-800 ml-2">
-                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block">Reminder Day of Month</label>
+                    <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block">{t("reminderDay")}</label>
                     <input
                       name="reminderDay"
                       type="number"
@@ -554,7 +556,7 @@ const EditUser: React.FC = () => {
                 Updating...
               </>
             ) : (
-              'Save Changes'
+              t("updateUser")
             )}
           </button>
         </div>

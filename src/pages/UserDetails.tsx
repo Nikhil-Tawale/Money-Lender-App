@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useTheme } from "../contexts/ThemeContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import {
   FiArrowLeft,
   FiUser,
@@ -23,6 +24,7 @@ const UserDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   useTheme();
+  const { t } = useLanguage();
 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -203,7 +205,7 @@ const UserDetails: React.FC = () => {
                 <p className="text-white/80 font-medium mt-1">{user.phone}</p>
                 <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/20 backdrop-blur-sm border border-white/20 text-xs font-semibold tracking-wide uppercase">
                   <span className={`w-2 h-2 rounded-full ${riskLevel === 'LOW' ? 'bg-emerald-300' : riskLevel === 'MEDIUM' ? 'bg-amber-300' : 'bg-rose-300'} animate-pulse`}></span>
-                  Risk: {riskLevel}
+                  {t("risk")}: {riskLevel === "LOW" ? t("riskLow") : riskLevel === "MEDIUM" ? t("riskMedium") : t("riskHigh")}
                 </div>
               </div>
             </div>
@@ -220,7 +222,7 @@ const UserDetails: React.FC = () => {
               </svg>
               <div className="absolute flex flex-col items-center">
                 <span className="text-xl font-bold">{Math.round(progressPercentage)}%</span>
-                <span className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">Paid</span>
+                <span className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">{t("paid")}</span>
               </div>
             </div>
           </div>
@@ -233,7 +235,7 @@ const UserDetails: React.FC = () => {
               <div className="p-1.5 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
                 <FiTrendingUp className="w-4 h-4" />
               </div>
-              <span className="text-sm font-medium">Borrowed</span>
+                <span className="text-sm font-medium">{t("borrowed")}</span>
             </div>
             <p className="text-2xl font-bold text-slate-800 dark:text-white">
               {currencySymbol}{user.borrowedAmount.toLocaleString()}
@@ -245,7 +247,7 @@ const UserDetails: React.FC = () => {
               <div className="p-1.5 bg-purple-50 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
                 <FiPercent className="w-4 h-4" />
               </div>
-              <span className="text-sm font-medium">Interest</span>
+                <span className="text-sm font-medium">{t("interest")}</span>
             </div>
             <p className="text-2xl font-bold text-slate-800 dark:text-white">
               {user.interestRate}%
@@ -258,7 +260,7 @@ const UserDetails: React.FC = () => {
               <div className="p-1.5 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <FiClock className="w-4 h-4" />
               </div>
-              <span className="text-sm font-medium">Remaining</span>
+                <span className="text-sm font-medium">{t("remaining")}</span>
             </div>
             <p className="text-2xl font-bold text-indigo-900 dark:text-indigo-300 relative z-10">
               {currencySymbol}{remaining.toLocaleString()}
@@ -269,12 +271,12 @@ const UserDetails: React.FC = () => {
         {/* PAYMENTS TIMELINE */}
         <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border border-slate-100 dark:border-gray-800 p-6 sm:p-8">
           <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-bold text-slate-800 dark:text-white">Payment History</h3>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t("paymentHistory")}</h3>
             <button
               onClick={() => setShowPaymentModal(true)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md shadow-indigo-500/20 active:scale-[0.98] sm:hover:scale-105 transition-all"
             >
-              <FiPlus className="w-4 h-4" /> Add Payment
+              <FiPlus className="w-4 h-4" /> {t("addPayment")}
             </button>
           </div>
 
@@ -283,8 +285,8 @@ const UserDetails: React.FC = () => {
               <div className="w-12 h-12 bg-slate-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
                 <FiClock className="w-6 h-6 text-slate-400" />
               </div>
-              <p className="text-slate-500 dark:text-gray-400 font-medium">No payments recorded yet</p>
-              <p className="text-sm text-slate-400 dark:text-gray-500 mt-1">Add the first payment to start tracking.</p>
+              <p className="text-slate-500 dark:text-gray-400 font-medium">{t("noPayments")}</p>
+              <p className="text-sm text-slate-400 dark:text-gray-500 mt-1">{t("noPaymentsDesc")}</p>
             </div>
           ) : (
             <div className="relative border-l-2 border-slate-100 dark:border-gray-800 ml-3 space-y-8 pb-2">
@@ -339,7 +341,7 @@ const UserDetails: React.FC = () => {
               <FiBell className="w-5 h-5 text-amber-600 dark:text-amber-400 animate-bounce" />
             </div>
             <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-              Reminder is set for day <b>{user.reminderDay}</b> of every month.
+              {t("reminderSetForDay").replace("{day}", String(user.reminderDay))}
             </p>
           </div>
         )}
@@ -375,12 +377,12 @@ const UserDetails: React.FC = () => {
                 >
                   <FiArrowLeft className="h-5 w-5" />
                 </button>
-                <h2 id="add-payment-title" className="text-xl font-bold text-slate-800 dark:text-white">Add Payment</h2>
+                <h2 id="add-payment-title" className="text-xl font-bold text-slate-800 dark:text-white">{t("addPayment")}</h2>
               </div>
             </div>
 
             <label className="block mb-5">
-              <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-gray-300">Payment amount</span>
+              <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-gray-300">{t("paymentAmount")}</span>
               <div className="relative">
                 <span className="absolute left-4 top-3.5 text-slate-400 font-medium">{currencySymbol}</span>
                 <input
@@ -396,18 +398,18 @@ const UserDetails: React.FC = () => {
             </label>
 
             <label className="block mb-8">
-              <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-gray-300">Note (Optional)</span>
+              <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-gray-300">{t("paymentNote")}</span>
               <textarea
                 rows={3}
                 className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
-                placeholder="Add a note about this payment"
+                placeholder={t("addPaymentNote")}
                 value={paymentNote}
                 onChange={(e) => setPaymentNote(e.target.value)}
               />
             </label>
 
             <button disabled={submitting} className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3.5 font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:from-indigo-700 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-60">
-              {submitting ? "Processing..." : "Confirm Payment"}
+              {submitting ? t("processing") : t("confirmPayment")}
             </button>
 
           </form>
@@ -431,9 +433,9 @@ const UserDetails: React.FC = () => {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300">
               <FiAlertTriangle className="h-7 w-7" />
             </div>
-            <h2 id="delete-user-title" className="text-xl font-bold text-slate-900 dark:text-white">Delete borrower?</h2>
+            <h2 id="delete-user-title" className="text-xl font-bold text-slate-900 dark:text-white">{t("deleteBorrower")}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-gray-400">
-              This will permanently remove <span className="font-semibold text-slate-700 dark:text-gray-200">{user.name}</span> and their payment history.
+              {t("deleteUserDescription")} <span className="font-semibold text-slate-700 dark:text-gray-200">{user.name}</span>
             </p>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
@@ -450,7 +452,7 @@ const UserDetails: React.FC = () => {
                 onClick={handleDeleteUser}
                 className="rounded-xl bg-rose-600 px-4 py-3 font-semibold text-white shadow-lg shadow-rose-600/20 transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {deleting ? "Deleting..." : "Delete User"}
+                {deleting ? t("deleting") : t("deleteUser")}
               </button>
             </div>
           </div>
