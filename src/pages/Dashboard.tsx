@@ -239,7 +239,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-slate-50 dark:bg-gray-950 transition-colors duration-300 font-sans">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-slate-50 dark:bg-gray-950 transition-colors duration-300 font-sans md:flex-row">
       {/* Subtle Grid Background */}
       <div
         className="fixed inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]"
@@ -251,7 +251,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       />
 
       {/* MOBILE TOP BAR */}
-      <div className="md:hidden sticky top-0 left-0 right-0 h-14 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl px-3 flex justify-between items-center shadow-sm z-50 border-b border-slate-200 dark:border-gray-800">
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-3 shadow-sm backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/95 md:hidden">
         <button
           onClick={() => setMobileSidebar(true)}
           aria-label="Open navigation"
@@ -328,7 +328,7 @@ const Dashboard: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       </motion.aside>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden relative z-10">
+      <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden md:w-auto">
         {/* HEADER */}
         <header className="hidden md:flex shrink-0 z-20 items-center justify-between gap-4 px-6 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-gray-800">
           {/* Global Search */}
