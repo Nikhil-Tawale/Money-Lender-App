@@ -16,8 +16,12 @@ export class LocalStorageService implements IDataService {
   private getCurrentUserId(): string | null {
     const currentUser = localStorage.getItem("current_user");
     if (currentUser) {
-      const user = JSON.parse(currentUser);
-      return user.id;
+      try {
+        const user = JSON.parse(currentUser);
+        return user?.id ? String(user.id) : null;
+      } catch {
+        return null;
+      }
     }
     return null;
   }
@@ -32,7 +36,9 @@ export class LocalStorageService implements IDataService {
 
   private saveBorrowers(borrowers: User[]): void {
     const currentUserId = this.getCurrentUserId();
-    if (!currentUserId) return;
+    if (!currentUserId) {
+      throw new Error("Your session has expired. Please log in again.");
+    }
 
     const allData = JSON.parse(localStorage.getItem(USERS_DATA_KEY) || "{}");
     allData[currentUserId] = borrowers;
@@ -65,7 +71,9 @@ export class LocalStorageService implements IDataService {
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | null> {
     const borrowers = this.getBorrowers();
-    const index = borrowers.findIndex((b) => b._id === id || b.id === id);
+    const index = borrowers.findIndex(
+      (b) => String(b._id ?? b.id) === String(id),
+    );
     if (index !== -1) {
       borrowers[index] = { ...borrowers[index], ...updates };
       this.saveBorrowers(borrowers);
@@ -76,7 +84,14 @@ export class LocalStorageService implements IDataService {
 
   async deleteUser(id: string): Promise<void> {
     const borrowers = this.getBorrowers();
-    const filtered = borrowers.filter((b) => b._id !== id && b.id !== id);
+    const filtered = borrowers.filter(
+      (b) => String(b._id ?? b.id) !== String(id),
+    );
+
+    if (filtered.length === borrowers.length) {
+      throw new Error("User was not found");
+    }
+
     this.saveBorrowers(filtered);
   }
 

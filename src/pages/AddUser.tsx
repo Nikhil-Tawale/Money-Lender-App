@@ -3,7 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTheme } from '../contexts/ThemeContext';
 import {
-  FiBell
+  FiUser,
+  FiPhone,
+  FiMail,
+  FiMapPin,
+  FiPercent,
+  FiBell,
+  FiCalendar,
+  FiTrendingUp,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiSave,
 } from 'react-icons/fi';
 import { dataService } from '../services/DataServiceFactory';
 import { helperService } from '../services/HelperService';
@@ -12,8 +22,8 @@ const AddUser: React.FC = () => {
   const navigate = useNavigate();
   useTheme();
   const [loading, setLoading] = useState(false);
-  const [_calculationError, _setCalculationError] = useState('');
 
+  const CurrencyIcon = helperService.getCurrencyIcon();
   const currencySymbol = helperService.getCurrencySymbol();
 
   const [formData, setFormData] = useState({
@@ -95,152 +105,381 @@ const AddUser: React.FC = () => {
         enableReminder: formData.enableReminder
       });
 
+      window.dispatchEvent(new Event('users-updated'));
       toast.success('User added!');
       navigate('/');
-    } catch {
-      toast.error('Error adding user');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error adding user');
     } finally {
       setLoading(false);
     }
   };
 
+  // Donut chart calculations
+  const borrowedAmountNum = parseFloat(formData.borrowedAmount) || 0;
+  const interestAmountNum = calculatedInterest?.interestAmount || 0;
+  const totalAmountNum = borrowedAmountNum + interestAmountNum;
+  const principalPercent = totalAmountNum > 0 ? (borrowedAmountNum / totalAmountNum) * 100 : 0;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-purple-200 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+    <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-6 sm:px-6 lg:px-8 transition-colors duration-300 font-sans">
+      <div className="max-w-6xl mx-auto">
 
-      {/* Form */}
-      <div className="w-full pb-10">
-        <form
-          onSubmit={handleSubmit}
-          className="backdrop-blur-2xl bg-white/60 dark:bg-gray-800/60 p-3 sm:p-5 md:p-8 rounded-2xl shadow-2xl border border-white/40 dark:border-gray-700/40 space-y-5 sm:space-y-6"
-        >
+        {/* HERO HEADER */}
+        <div className="mb-8 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+            <FiUser className="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Add New Borrower
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
+              Create a new loan profile with custom terms and reminders.
+            </p>
+          </div>
+        </div>
 
-          {/* Basic Info */}
-          <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 shadow-inner">
-            <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">👤 Basic Info</h2>
+        {/* MAIN GRID */}
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
-            <div className="grid md:grid-cols-2 gap-3">
-              {['name', 'phone', 'email', 'address'].map((field) => (
+          {/* LEFT COLUMN: FORM */}
+          <div className="lg:col-span-2 space-y-6">
+
+            {/* BASIC INFO SECTION */}
+            <section className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-gray-800">
+              <div className="flex items-center gap-2 border-b border-slate-100 dark:border-gray-800 pb-3 mb-5">
+                <div className="p-1.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                  <FiUser className="w-4 h-4" />
+                </div>
+                <h2 className="font-semibold text-slate-800 dark:text-white">Basic Information</h2>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="relative">
+                  <FiUser className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                  <input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Full Name *"
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="relative">
+                  <FiPhone className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                  <input
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="relative md:col-span-2">
+                  <FiMail className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                  <input
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email Address"
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="relative md:col-span-2">
+                  <FiMapPin className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                  <textarea
+                    name="address"
+                    rows={2}
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder="Address"
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500 resize-none"
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* LOAN DETAILS SECTION */}
+            <section className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-gray-800">
+              <div className="flex items-center gap-2 border-b border-slate-100 dark:border-gray-800 pb-3 mb-5">
+                <div className="p-1.5 bg-amber-50 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
+                  <FiTrendingUp className="w-4 h-4" />
+                </div>
+                <h2 className="font-semibold text-slate-800 dark:text-white">Loan Details</h2>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Borrowed Amount</label>
+                  <div className="relative">
+                    <CurrencyIcon className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                    <input
+                      name="borrowedAmount"
+                      type="number"
+                      value={formData.borrowedAmount}
+                      onChange={handleChange}
+                      placeholder="0.00"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Interest Rate (%)</label>
+                  <div className="relative">
+                    <FiPercent className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                    <input
+                      name="interestRate"
+                      type="number"
+                      value={formData.interestRate}
+                      onChange={handleChange}
+                      placeholder="0"
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Frequency</label>
+                  <select
+                    name="interestFrequency"
+                    value={formData.interestFrequency}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Start Date</label>
+                  <div className="relative">
+                    <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleChange}
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 mb-1.5 block ml-1">Return Date</label>
+                  <div className="relative">
+                    <FiCalendar className="absolute left-4 top-3.5 text-slate-400 w-5 h-5" />
+                    <input
+                      type="date"
+                      name="returnDate"
+                      value={formData.returnDate}
+                      onChange={handleChange}
+                      className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* INTERACTIVE INTEREST SLIDER */}
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-gray-800">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs font-semibold text-slate-500 dark:text-gray-400 ml-1">Quick Adjust Interest Rate</label>
+                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-md">
+                    {formData.interestRate || 0}%
+                  </span>
+                </div>
                 <input
-                  key={field}
-                  name={field}
-                  value={(formData as any)[field]}
-                  onChange={handleChange}
-                  placeholder={field === 'name' ? 'Full Name *' : field}
-                  className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 transition dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value={formData.interestRate || 0}
+                  onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
+                  className="w-full h-2 bg-slate-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                 />
-              ))}
-            </div>
-          </div>
+              </div>
+            </section>
 
-          {/* Loan Details */}
-          <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 shadow-inner">
-            <h2 className="font-semibold text-gray-700 dark:text-gray-200 mb-4">💰 Loan Details</h2>
+            {/* REMINDER SETTINGS */}
+            <section className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-slate-100 dark:border-gray-800">
+              <div className="flex items-center gap-2 border-b border-slate-100 dark:border-gray-800 pb-3 mb-5">
+                <div className="p-1.5 bg-violet-50 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400">
+                  <FiBell className="w-4 h-4" />
+                </div>
+                <h2 className="font-semibold text-slate-800 dark:text-white">Reminder Settings</h2>
+              </div>
 
-            <div className="grid md:grid-cols-2 gap-3">
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-gray-800/50 rounded-2xl border border-slate-100 dark:border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                    <FiBell className="w-4 h-4 text-violet-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white">Enable Reminders</p>
+                    <p className="text-xs text-slate-500 dark:text-gray-400">Get notified before the return date</p>
+                  </div>
+                </div>
 
-              <input
-                name="borrowedAmount"
-                value={formData.borrowedAmount}
-                onChange={handleChange}
-                placeholder={`Amount (${currencySymbol})`}
-                className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              />
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="enableReminder"
+                    checked={formData.enableReminder}
+                    onChange={handleChange}
+                    className="sr-only peer"
+                  />
+                  <div className="w-12 h-7 bg-slate-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500 transition-colors"></div>
+                  <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5"></div>
+                </label>
+              </div>
+            </section>
 
-              <input
-                name="interestRate"
-                value={formData.interestRate}
-                onChange={handleChange}
-                placeholder="Interest %"
-                className="input-field p-3 rounded-xl focus:ring-2 focus:ring-indigo-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              />
-
-              <select
-                name="interestFrequency"
-                value={formData.interestFrequency}
-                onChange={handleChange}
-                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            {/* ACTION BUTTONS (MOBILE) */}
+            <div className="lg:hidden flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="flex-1 py-3.5 rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-200 font-medium hover:bg-slate-50 transition"
               >
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-              </select>
-
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              />
-
-              <input
-                type="date"
-                name="returnDate"
-                value={formData.returnDate}
-                onChange={handleChange}
-                className="input-field p-3 rounded-xl dark:bg-gray-700 dark:text-white dark:border-gray-600"
-              />
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 py-3.5 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 font-semibold shadow-md shadow-indigo-500/20 hover:scale-[1.02] transition disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <FiSave className="w-4 h-4" /> Add User
+                  </>
+                )}
+              </button>
             </div>
+
           </div>
 
-          {/* Interest Preview */}
-          {calculatedInterest && (
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/30 dark:to-blue-900/30 border dark:border-gray-700 shadow-md animate-fadeIn">
-              <h3 className="font-semibold mb-3 text-gray-800 dark:text-gray-100">📊 Interest Preview</h3>
+          {/* RIGHT COLUMN: LIVE PREVIEW (STICKY) */}
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-6 space-y-4">
 
-              <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                <span>Interest</span>
-                <span className="font-semibold">
-                  {currencySymbol}{calculatedInterest.interestAmount.toFixed(2)}
-                </span>
+              {/* PREVIEW CARD */}
+              <div className="bg-gradient-to-b from-indigo-50 to-white dark:from-indigo-950/40 dark:to-gray-900 rounded-3xl p-6 border border-indigo-100 dark:border-indigo-900/50 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+                  <FiCheckCircle className="w-4 h-4 text-indigo-500" /> Live Loan Preview
+                </h3>
+
+                {calculatedInterest ? (
+                  <>
+                    {/* Donut Chart */}
+                    <div className="flex justify-center mb-6 relative">
+                      <svg viewBox="0 0 36 36" className="w-40 h-40 transform -rotate-90">
+                        <circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#e2e8f0" strokeWidth="3" className="dark:stroke-gray-700" />
+                        <circle
+                          cx="18" cy="18" r="15.9155" fill="transparent"
+                          stroke="#6366f1" strokeWidth="3"
+                          strokeDasharray={`${principalPercent} ${100 - principalPercent}`}
+                          strokeDashoffset="0"
+                          strokeLinecap="round"
+                        />
+                        <circle
+                          cx="18" cy="18" r="15.9155" fill="transparent"
+                          stroke="#14b8a6" strokeWidth="3"
+                          strokeDasharray={`${100 - principalPercent} ${principalPercent}`}
+                          strokeDashoffset={`-${principalPercent}`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Total Payable</span>
+                        <span className="text-xl font-bold text-slate-800 dark:text-white">
+                          {currencySymbol}{calculatedInterest.totalAmount.toFixed(0)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Breakdown */}
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center gap-2 text-slate-600 dark:text-gray-400 font-medium">
+                          <span className="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Principal
+                        </span>
+                        <span className="font-semibold text-slate-800 dark:text-white">
+                          {currencySymbol}{borrowedAmountNum.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="flex items-center gap-2 text-slate-600 dark:text-gray-400 font-medium">
+                          <span className="w-2.5 h-2.5 rounded-full bg-teal-500"></span> Interest
+                        </span>
+                        <span className="font-semibold text-slate-800 dark:text-white">
+                          {currencySymbol}{calculatedInterest.interestAmount.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="border-t border-slate-200 dark:border-gray-700 pt-3 flex justify-between items-center">
+                        <span className="font-bold text-slate-800 dark:text-white">Total</span>
+                        <span className="font-bold text-indigo-600 dark:text-indigo-400 text-lg">
+                          {currencySymbol}{calculatedInterest.totalAmount.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="pt-2 flex justify-between items-center text-xs text-slate-400">
+                        <span>Billing Periods</span>
+                        <span className="font-semibold">{calculatedInterest.periods} × {formData.interestFrequency}</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="py-12 text-center">
+                    <div className="w-14 h-14 bg-slate-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <FiAlertCircle className="w-6 h-6 text-slate-400" />
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-gray-400 font-medium px-4 leading-relaxed">
+                      Fill in the loan amount, interest rate, and return date to see a live preview.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div className="flex justify-between font-bold text-lg mt-2 border-t pt-2">
-                <span>Total</span>
-                <span>
-                  {currencySymbol}{calculatedInterest.totalAmount.toFixed(2)}
-                </span>
+              {/* DESKTOP ACTION BUTTONS */}
+              <div className="hidden lg:flex flex-col gap-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 font-semibold shadow-md shadow-indigo-500/20 hover:scale-[1.02] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <FiSave className="w-4 h-4" /> Add User
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  className="w-full py-3.5 rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-slate-700 dark:text-gray-200 font-medium hover:bg-slate-50 dark:hover:bg-gray-800 transition"
+                >
+                  Cancel
+                </button>
               </div>
+
             </div>
-          )}
-
-          {/* Reminder Toggle */}
-          <div className="flex items-center justify-between bg-white/70 dark:bg-gray-800/70 p-4 rounded-xl shadow-inner">
-            <span className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium">
-              <FiBell /> Enable Reminder
-            </span>
-
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                name="enableReminder"
-                checked={formData.enableReminder}
-                onChange={handleChange}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full peer peer-checked:bg-indigo-600 dark:peer-checked:bg-indigo-500 transition"></div>
-              <div className="absolute left-1 top-1 w-4 h-4 bg-white dark:bg-gray-300 rounded-full transition peer-checked:translate-x-5"></div>
-            </label>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="flex-1 py-3 rounded-xl border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 transition"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-3 rounded-xl text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:scale-105 transition shadow-lg"
-            >
-              {loading ? 'Adding...' : 'Add User'}
-            </button>
           </div>
 
         </form>
