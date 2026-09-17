@@ -12,6 +12,7 @@ import {
   FiArrowRight,
   FiZap,
   FiInbox,
+  FiArrowLeft
 } from "react-icons/fi";
 import { User } from "../types";
 import { dataService } from "../services/DataServiceFactory";
@@ -226,238 +227,305 @@ const Reminders: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-6 sm:px-6 lg:px-8 transition-colors duration-300 font-sans">
-      <div className="max-w-6xl mx-auto">
+    <>
+      <style>{`
+        .rem-scroll::-webkit-scrollbar { width: 4px; }
+        .rem-scroll::-webkit-scrollbar-track { background: transparent; }
+        .rem-scroll::-webkit-scrollbar-thumb {
+          background: #cbd5e1; border-radius: 4px;
+        }
+        .dark .rem-scroll::-webkit-scrollbar-thumb { background: #475569; }
+      `}</style>
 
-        {/* HERO HEADER */}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <FiBell className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Reminders
-              </h1>
-              <p className="text-sm text-slate-500 dark:text-gray-400 mt-0.5">
-                {t("reminderPreferencesDesc")}
-              </p>
-            </div>
-          </div>
-
-          {overdueReminders.length > 0 && (
-            <button
-              onClick={sendAllOverdueNotifications}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-rose-500 to-red-600 text-white text-sm font-semibold rounded-xl shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all"
-            >
-                <FiZap className="w-4 h-4" /> {t("sendAllOverdue")}
-            </button>
-          )}
-        </div>
-
-        {/* KPI SUMMARY CARDS (Clickable filters) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          {[
-            { id: "today" as FilterType, label: t("today"), value: todayReminders.length, color: "from-amber-400 to-orange-500", bg: "bg-amber-50 dark:bg-amber-900/20", border: "border-amber-100 dark:border-amber-900/50", icon: FiBell },
-            { id: "dueSoon" as FilterType, label: t("dueSoon"), value: dueSoonReminders.length, color: "from-orange-500 to-red-500", bg: "bg-orange-50 dark:bg-orange-900/20", border: "border-orange-100 dark:border-orange-900/50", icon: FiAlertCircle },
-            { id: "overdue" as FilterType, label: t("overdue"), value: overdueReminders.length, color: "from-rose-500 to-pink-600", bg: "bg-rose-50 dark:bg-rose-900/20", border: "border-rose-100 dark:border-rose-900/50", icon: FiAlertCircle },
-            { id: "upcoming" as FilterType, label: t("upcoming"), value: upcomingReminders.length, color: "from-blue-500 to-cyan-500", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-100 dark:border-blue-900/50", icon: FiCalendar },
-          ].map((item, idx) => (
-            <motion.button
-              key={idx}
-              onClick={() => setActiveFilter(activeFilter === item.id ? "all" : item.id)}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.08 }}
-              whileHover={{ y: -3 }}
-              className={`text-left rounded-2xl p-4 border transition-all ${
-                activeFilter === item.id
-                  ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-gray-950"
-                  : ""
-              } ${item.bg} ${item.border}`}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-gray-400">
-                    {item.label}
-                  </p>
-                  <p className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white mt-1">
-                    {item.value}
-                  </p>
-                </div>
-                <div className={`p-2 rounded-xl bg-gradient-to-br ${item.color} text-white shadow-md`}>
-                  <item.icon size={16} />
-                </div>
+      <button
+        onClick={() => navigate("/")}
+        aria-label="Back to dashboard"
+        className="group flex items-center gap-2 px-4 h-10 rounded-xl bg-white dark:bg-gray-900 shadow-sm border border-slate-200/70 dark:border-gray-800 text-slate-600 dark:text-gray-300 hover:shadow-md hover:border-slate-300 active:scale-95 transition-all mb-4 w-fit shrink-0"
+      >
+        <FiArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+        <span className="text-sm font-semibold hidden sm:inline">
+          Dashboard
+        </span>
+      </button>
+      {/* VIEWPORT-LOCKED WRAPPER */}
+      <div className="h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-4 sm:px-6 lg:px-8 transition-colors duration-300 font-sans flex flex-col overflow-hidden">
+        <div className="max-w-6xl mx-auto w-full flex flex-col h-full">
+          {/* HERO HEADER */}
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <FiBell className="w-5 h-5 text-white" />
               </div>
-            </motion.button>
-          ))}
-        </div>
-
-        {/* FILTER TABS */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-1 -mx-1 px-1">
-          {filterTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
-                activeFilter === tab.id
-                  ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md"
-                  : "bg-white dark:bg-gray-900 text-slate-600 dark:text-gray-400 border border-slate-200 dark:border-gray-800 hover:bg-slate-50 dark:hover:bg-gray-800"
-              }`}
-            >
-              {tab.label}
-              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                activeFilter === tab.id 
-                  ? "bg-white/20 dark:bg-slate-900/20" 
-                  : tab.color
-              }`}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* CONTENT AREA */}
-        {!hasAnyReminders ? (
-          <div className="bg-white dark:bg-gray-900 rounded-3xl p-12 text-center border border-slate-100 dark:border-gray-800 shadow-sm">
-            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FiCheckCircle className="w-8 h-8 text-emerald-500" />
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+                  Reminders
+                </h1>
+                <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">
+                  {t("reminderPreferencesDesc")}
+                </p>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-1">{t("allCaughtUp")}</h3>
-            <p className="text-sm text-slate-500 dark:text-gray-400">{t("allCaughtUpDesc")}</p>
+
+            {overdueReminders.length > 0 && (
+              <button
+                onClick={sendAllOverdueNotifications}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-red-600 text-white text-xs font-semibold rounded-xl shadow-md shadow-rose-500/20 hover:scale-[1.02] transition-all"
+              >
+                <FiZap className="w-3.5 h-3.5" /> {t("sendAllOverdue")}
+              </button>
+            )}
           </div>
-        ) : (
-          <div className="space-y-8">
-            <AnimatePresence mode="wait">
-              {showOverdue && overdueReminders.length > 0 && (
-                <SectionWrapper
-                  key="overdue"
-                  title={t("overdueLoans")}
-                  subtitle="Immediate action required"
-                  count={overdueReminders.length}
-                  icon={<FiAlertCircle className="w-5 h-5" />}
-                  accentColor="rose"
-                >
-                  {overdueReminders.map((user) => (
-                    <ReminderCard
-                      key={user._id || user.id}
-                      user={user}
-                      type="overdue"
-                      currencySymbol={currencySymbol}
-                      calculateTotal={calculateTotalWithInterest}
-                      onNotifyAdmin={notifyAdminOverdue}
-                      onNotifyBorrower={notifyBorrowerDue}
-                      adminUser={adminUser}
-                      sendWhatsApp={sendWhatsApp}
-                      sendSMS={sendSMS}
-                      navigate={navigate}
-                    />
-                  ))}
-                </SectionWrapper>
-              )}
 
-              {showToday && todayReminders.length > 0 && (
-                <SectionWrapper
-                  key="today"
-                  title={t("todaysReminders")}
-                  subtitle={t("scheduledToday")}
-                  count={todayReminders.length}
-                  icon={<FiBell className="w-5 h-5" />}
-                  accentColor="amber"
-                >
-                  {todayReminders.map((user) => (
-                    <ReminderCard
-                      key={user._id || user.id}
-                      user={user}
-                      type="today"
-                      currencySymbol={currencySymbol}
-                      calculateTotal={calculateTotalWithInterest}
-                      onNotifyAdmin={() => {}}
-                      onNotifyBorrower={notifyBorrowerDue}
-                      adminUser={adminUser}
-                      sendWhatsApp={sendWhatsApp}
-                      sendSMS={sendSMS}
-                      navigate={navigate}
-                    />
-                  ))}
-                </SectionWrapper>
-              )}
-
-              {showDueSoon && dueSoonReminders.length > 0 && (
-                <SectionWrapper
-                  key="dueSoon"
-                  title={t("dueIn3Days")}
-                  subtitle={t("prepareCollection")}
-                  count={dueSoonReminders.length}
-                  icon={<FiCalendar className="w-5 h-5" />}
-                  accentColor="orange"
-                >
-                  {dueSoonReminders.map((user) => (
-                    <ReminderCard
-                      key={user._id || user.id}
-                      user={user}
-                      type="due"
-                      currencySymbol={currencySymbol}
-                      calculateTotal={calculateTotalWithInterest}
-                      onNotifyAdmin={notifyAdminDueSoon}
-                      onNotifyBorrower={notifyBorrowerDue}
-                      adminUser={adminUser}
-                      sendWhatsApp={sendWhatsApp}
-                      sendSMS={sendSMS}
-                      navigate={navigate}
-                    />
-                  ))}
-                </SectionWrapper>
-              )}
-
-              {showUpcoming && upcomingReminders.length > 0 && (
-                <SectionWrapper
-                  key="upcoming"
-                  title={t("upcomingReturns")}
-                  subtitle={t("nextSevenDays")}
-                  count={upcomingReminders.length}
-                  icon={<FiCalendar className="w-5 h-5" />}
-                  accentColor="blue"
-                >
-                  {upcomingReminders.map((user) => (
-                    <ReminderCard
-                      key={user._id || user.id}
-                      user={user}
-                      type="upcoming"
-                      currencySymbol={currencySymbol}
-                      calculateTotal={calculateTotalWithInterest}
-                      onNotifyAdmin={() => {}}
-                      onNotifyBorrower={notifyBorrowerDue}
-                      adminUser={adminUser}
-                      sendWhatsApp={sendWhatsApp}
-                      sendSMS={sendSMS}
-                      navigate={navigate}
-                    />
-                  ))}
-                </SectionWrapper>
-              )}
-            </AnimatePresence>
-
-            {/* Empty state for active filter */}
-            {activeFilter !== "all" &&
-              ((activeFilter === "overdue" && overdueReminders.length === 0) ||
-                (activeFilter === "today" && todayReminders.length === 0) ||
-                (activeFilter === "dueSoon" && dueSoonReminders.length === 0) ||
-                (activeFilter === "upcoming" && upcomingReminders.length === 0)) && (
-                <div className="bg-white dark:bg-gray-900 rounded-3xl p-12 text-center border border-slate-100 dark:border-gray-800">
-                  <div className="w-14 h-14 bg-slate-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FiInbox className="w-6 h-6 text-slate-400" />
+          {/* KPI SUMMARY CARDS (Clickable filters) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 shrink-0">
+            {[
+              {
+                id: "today" as FilterType,
+                label: t("today"),
+                value: todayReminders.length,
+                color: "from-amber-400 to-orange-500",
+                bg: "bg-amber-50 dark:bg-amber-900/20",
+                border: "border-amber-100 dark:border-amber-900/50",
+                icon: FiBell,
+              },
+              {
+                id: "dueSoon" as FilterType,
+                label: t("dueSoon"),
+                value: dueSoonReminders.length,
+                color: "from-orange-500 to-red-500",
+                bg: "bg-orange-50 dark:bg-orange-900/20",
+                border: "border-orange-100 dark:border-orange-900/50",
+                icon: FiAlertCircle,
+              },
+              {
+                id: "overdue" as FilterType,
+                label: t("overdue"),
+                value: overdueReminders.length,
+                color: "from-rose-500 to-pink-600",
+                bg: "bg-rose-50 dark:bg-rose-900/20",
+                border: "border-rose-100 dark:border-rose-900/50",
+                icon: FiAlertCircle,
+              },
+              {
+                id: "upcoming" as FilterType,
+                label: t("upcoming"),
+                value: upcomingReminders.length,
+                color: "from-blue-500 to-cyan-500",
+                bg: "bg-blue-50 dark:bg-blue-900/20",
+                border: "border-blue-100 dark:border-blue-900/50",
+                icon: FiCalendar,
+              },
+            ].map((item, idx) => (
+              <motion.button
+                key={idx}
+                onClick={() =>
+                  setActiveFilter(activeFilter === item.id ? "all" : item.id)
+                }
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.08 }}
+                whileHover={{ y: -3 }}
+                className={`text-left rounded-2xl p-3 border transition-all ${
+                  activeFilter === item.id
+                    ? "ring-2 ring-indigo-500 ring-offset-2 dark:ring-offset-gray-950"
+                    : ""
+                } ${item.bg} ${item.border}`}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-gray-400">
+                      {item.label}
+                    </p>
+                    <p className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white mt-0.5">
+                      {item.value}
+                    </p>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-gray-400 font-medium">
-                    No reminders in this category.
-                  </p>
+                  <div
+                    className={`p-1.5 rounded-lg bg-gradient-to-br ${item.color} text-white shadow-md`}
+                  >
+                    <item.icon size={14} />
+                  </div>
                 </div>
-              )}
+              </motion.button>
+            ))}
           </div>
-        )}
 
+          {/* FILTER TABS */}
+          <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1 -mx-1 px-1 shrink-0 rem-scroll">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveFilter(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                  activeFilter === tab.id
+                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md"
+                    : "bg-white dark:bg-gray-900 text-slate-600 dark:text-gray-400 border border-slate-200 dark:border-gray-800 hover:bg-slate-50 dark:hover:bg-gray-800"
+                }`}
+              >
+                {tab.label}
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                    activeFilter === tab.id
+                      ? "bg-white/20 dark:bg-slate-900/20"
+                      : tab.color
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* CONTENT AREA — scrollable internally */}
+          <div className="flex-1 min-h-0 overflow-y-auto rem-scroll pr-1">
+            {!hasAnyReminders ? (
+              <div className="bg-white dark:bg-gray-900 rounded-[20px] p-10 text-center border border-slate-100 dark:border-gray-800 shadow-sm">
+                <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <FiCheckCircle className="w-6 h-6 text-emerald-500" />
+                </div>
+                <h3 className="text-base font-bold text-slate-800 dark:text-white mb-1">
+                  {t("allCaughtUp")}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-gray-400">
+                  {t("allCaughtUpDesc")}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-5">
+                <AnimatePresence mode="wait">
+                  {showOverdue && overdueReminders.length > 0 && (
+                    <SectionWrapper
+                      key="overdue"
+                      title={t("overdueLoans")}
+                      subtitle="Immediate action required"
+                      count={overdueReminders.length}
+                      icon={<FiAlertCircle className="w-4 h-4" />}
+                      accentColor="rose"
+                    >
+                      {overdueReminders.map((user) => (
+                        <ReminderCard
+                          key={user._id || user.id}
+                          user={user}
+                          type="overdue"
+                          currencySymbol={currencySymbol}
+                          calculateTotal={calculateTotalWithInterest}
+                          onNotifyAdmin={notifyAdminOverdue}
+                          onNotifyBorrower={notifyBorrowerDue}
+                          adminUser={adminUser}
+                          sendWhatsApp={sendWhatsApp}
+                          sendSMS={sendSMS}
+                          navigate={navigate}
+                        />
+                      ))}
+                    </SectionWrapper>
+                  )}
+
+                  {showToday && todayReminders.length > 0 && (
+                    <SectionWrapper
+                      key="today"
+                      title={t("todaysReminders")}
+                      subtitle={t("scheduledToday")}
+                      count={todayReminders.length}
+                      icon={<FiBell className="w-4 h-4" />}
+                      accentColor="amber"
+                    >
+                      {todayReminders.map((user) => (
+                        <ReminderCard
+                          key={user._id || user.id}
+                          user={user}
+                          type="today"
+                          currencySymbol={currencySymbol}
+                          calculateTotal={calculateTotalWithInterest}
+                          onNotifyAdmin={() => {}}
+                          onNotifyBorrower={notifyBorrowerDue}
+                          adminUser={adminUser}
+                          sendWhatsApp={sendWhatsApp}
+                          sendSMS={sendSMS}
+                          navigate={navigate}
+                        />
+                      ))}
+                    </SectionWrapper>
+                  )}
+
+                  {showDueSoon && dueSoonReminders.length > 0 && (
+                    <SectionWrapper
+                      key="dueSoon"
+                      title={t("dueIn3Days")}
+                      subtitle={t("prepareCollection")}
+                      count={dueSoonReminders.length}
+                      icon={<FiCalendar className="w-4 h-4" />}
+                      accentColor="orange"
+                    >
+                      {dueSoonReminders.map((user) => (
+                        <ReminderCard
+                          key={user._id || user.id}
+                          user={user}
+                          type="due"
+                          currencySymbol={currencySymbol}
+                          calculateTotal={calculateTotalWithInterest}
+                          onNotifyAdmin={notifyAdminDueSoon}
+                          onNotifyBorrower={notifyBorrowerDue}
+                          adminUser={adminUser}
+                          sendWhatsApp={sendWhatsApp}
+                          sendSMS={sendSMS}
+                          navigate={navigate}
+                        />
+                      ))}
+                    </SectionWrapper>
+                  )}
+
+                  {showUpcoming && upcomingReminders.length > 0 && (
+                    <SectionWrapper
+                      key="upcoming"
+                      title={t("upcomingReturns")}
+                      subtitle={t("nextSevenDays")}
+                      count={upcomingReminders.length}
+                      icon={<FiCalendar className="w-4 h-4" />}
+                      accentColor="blue"
+                    >
+                      {upcomingReminders.map((user) => (
+                        <ReminderCard
+                          key={user._id || user.id}
+                          user={user}
+                          type="upcoming"
+                          currencySymbol={currencySymbol}
+                          calculateTotal={calculateTotalWithInterest}
+                          onNotifyAdmin={() => {}}
+                          onNotifyBorrower={notifyBorrowerDue}
+                          adminUser={adminUser}
+                          sendWhatsApp={sendWhatsApp}
+                          sendSMS={sendSMS}
+                          navigate={navigate}
+                        />
+                      ))}
+                    </SectionWrapper>
+                  )}
+                </AnimatePresence>
+
+                {/* Empty state for active filter */}
+                {activeFilter !== "all" &&
+                  ((activeFilter === "overdue" &&
+                    overdueReminders.length === 0) ||
+                    (activeFilter === "today" && todayReminders.length === 0) ||
+                    (activeFilter === "dueSoon" &&
+                      dueSoonReminders.length === 0) ||
+                    (activeFilter === "upcoming" &&
+                      upcomingReminders.length === 0)) && (
+                    <div className="bg-white dark:bg-gray-900 rounded-[20px] p-10 text-center border border-slate-100 dark:border-gray-800">
+                      <div className="w-12 h-12 bg-slate-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <FiInbox className="w-5 h-5 text-slate-400" />
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-gray-400 font-medium">
+                        No reminders in this category.
+                      </p>
+                    </div>
+                  )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -485,21 +553,21 @@ const SectionWrapper: React.FC<{
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`p-2 rounded-xl ${colors.bg} ${colors.text}`}>
+      <div className="flex items-center gap-3 mb-3">
+        <div className={`p-1.5 rounded-lg ${colors.bg} ${colors.text}`}>
           {icon}
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h2>
-            <span className={`text-[10px] font-bold text-white px-2 py-0.5 rounded-full ${colors.badge}`}>
+            <h2 className="text-base font-bold text-slate-800 dark:text-white">{title}</h2>
+            <span className={`text-[10px] font-bold text-white px-1.5 py-0.5 rounded-full ${colors.badge}`}>
               {count}
             </span>
           </div>
-          <p className="text-xs text-slate-500 dark:text-gray-400">{subtitle}</p>
+          <p className="text-[10px] text-slate-500 dark:text-gray-400">{subtitle}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {children}
       </div>
     </motion.div>
@@ -553,54 +621,54 @@ const ReminderCard: React.FC<{
       transition={{ duration: 0.2 }}
       className={`bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-100 dark:border-gray-800 border-l-4 ${styles.border} overflow-hidden`}
     >
-      <div className="p-5">
+      <div className="p-4">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-md">
               {initials}
             </div>
             <div>
               <h3 className="font-bold text-slate-800 dark:text-white text-sm">{user.name}</h3>
               {user.phone && (
-                <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">{user.phone}</p>
+                <p className="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">{user.phone}</p>
               )}
             </div>
           </div>
-          <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-md ${styles.badge}`}>
+          <span className={`text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md ${styles.badge}`}>
             {styles.label}
           </span>
         </div>
 
         {/* Data rows */}
-        <div className="space-y-2 text-sm border-t border-slate-100 dark:border-gray-800 pt-3">
+        <div className="space-y-1.5 text-sm border-t border-slate-100 dark:border-gray-800 pt-2.5">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-slate-500 dark:text-gray-400">Borrowed</span>
-            <span className="font-semibold text-slate-800 dark:text-white">
+            <span className="text-[11px] text-slate-500 dark:text-gray-400">Borrowed</span>
+            <span className="font-semibold text-slate-800 dark:text-white text-xs tabular-nums">
               {currencySymbol}{user.borrowedAmount.toLocaleString()}
             </span>
           </div>
           {user.returnDate && (
             <div className="flex justify-between items-center">
-              <span className="text-xs text-slate-500 dark:text-gray-400">Return Date</span>
-              <span className="font-medium text-slate-700 dark:text-gray-300">
+              <span className="text-[11px] text-slate-500 dark:text-gray-400">Return Date</span>
+              <span className="font-medium text-slate-700 dark:text-gray-300 text-xs">
                 {new Date(user.returnDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
               </span>
             </div>
           )}
-          <div className="flex justify-between items-center pt-2 border-t border-dashed border-slate-100 dark:border-gray-800">
-            <span className="text-xs font-semibold text-slate-500 dark:text-gray-400">Total Due</span>
-            <span className="font-bold text-indigo-600 dark:text-indigo-400">
+          <div className="flex justify-between items-center pt-1.5 border-t border-dashed border-slate-100 dark:border-gray-800">
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-gray-400">Total Due</span>
+            <span className="font-bold text-indigo-600 dark:text-indigo-400 text-xs tabular-nums">
               {currencySymbol}{calculateTotal(user).toLocaleString()}
             </span>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 dark:border-gray-800">
+        <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-100 dark:border-gray-800">
           <button
             onClick={() => navigate(`/user/${user._id || user.id}`)}
-            className="flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition"
+            className="flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition"
           >
             View <FiArrowRight className="w-3 h-3" />
           </button>
@@ -609,7 +677,7 @@ const ReminderCard: React.FC<{
             {type !== "today" && (
               <IconButton
                 onClick={() => onNotifyAdmin(user)}
-                icon={<FiMail className="w-3.5 h-3.5" />}
+                icon={<FiMail className="w-3 h-3" />}
                 tooltip="Notify Admin"
                 color="bg-blue-500 hover:bg-blue-600"
               />
@@ -622,14 +690,14 @@ const ReminderCard: React.FC<{
                     `Loan for ${user.name} is ${type === "overdue" ? "overdue" : "due soon"}. Total due: ${currencySymbol}${calculateTotal(user).toLocaleString()}`
                   )
                 }
-                icon={<FiMessageSquare className="w-3.5 h-3.5" />}
+                icon={<FiMessageSquare className="w-3 h-3" />}
                 tooltip="WhatsApp Admin"
                 color="bg-emerald-500 hover:bg-emerald-600"
               />
             )}
             <IconButton
               onClick={() => onNotifyBorrower(user)}
-              icon={<FiBell className="w-3.5 h-3.5" />}
+              icon={<FiBell className="w-3 h-3" />}
               tooltip="Notify Borrower"
               color="bg-orange-500 hover:bg-orange-600"
             />
@@ -651,7 +719,7 @@ const IconButton: React.FC<{
     onClick={onClick}
     title={tooltip}
     aria-label={tooltip}
-    className={`flex items-center justify-center w-8 h-8 rounded-lg text-white shadow-sm transition-all hover:scale-110 ${color}`}
+    className={`flex items-center justify-center w-7 h-7 rounded-lg text-white shadow-sm transition-all hover:scale-110 ${color}`}
   >
     {icon}
   </button>

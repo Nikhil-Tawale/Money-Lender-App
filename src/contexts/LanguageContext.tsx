@@ -220,6 +220,8 @@ const translations = {
     errorRegistrationFailed: "Registration failed",
     errorSomethingWrong: "Something went wrong",
     errorNoConnection: "No internet connection",
+    nextPaymentPending: "Next payment pending",
+
   },
 
   hi: {
@@ -354,7 +356,7 @@ const translations = {
     paymentHistory: "भुगतान इतिहास",
     noPayments: "अभी तक कोई भुगतान दर्ज नहीं",
     noPaymentsDesc: "ट्रैकिंग शुरू करने के लिए पहला भुगतान जोड़ें।",
-    paymentPending: "अगला भुगतान लंबित",
+    nextPaymentPending: "अगला भुगतान लंबित",
     riskLow: "कम",
     riskMedium: "मध्यम",
     riskHigh: "उच्च",
@@ -567,7 +569,7 @@ const translations = {
     paymentHistory: "पेमेंट इतिहास",
     noPayments: "अद्याप कोणतेही पेमेंट नोंदवलेले नाही",
     noPaymentsDesc: "ट्रॅकिंग सुरू करण्यासाठी पहिले पेमेंट जोडा.",
-    paymentPending: "पुढील पेमेंट प्रलंबित",
+    nextPaymentPending: "पुढील पेमेंट प्रलंबित",
     riskLow: "कमी",
     riskMedium: "मध्यम",
     riskHigh: "उच्च",
