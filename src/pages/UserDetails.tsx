@@ -22,7 +22,6 @@ import {
   FiPercent,
   FiAlertTriangle,
   FiChevronRight,
-  FiInfo,
   FiCalendar,
   FiActivity,
   FiShield,

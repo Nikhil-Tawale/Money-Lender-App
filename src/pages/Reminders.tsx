@@ -237,19 +237,19 @@ const Reminders: React.FC = () => {
         .dark .rem-scroll::-webkit-scrollbar-thumb { background: #475569; }
       `}</style>
 
-      <button
-        onClick={() => navigate("/")}
-        aria-label="Back to dashboard"
-        className="group flex items-center gap-2 px-4 h-10 rounded-xl bg-white dark:bg-gray-900 shadow-sm border border-slate-200/70 dark:border-gray-800 text-slate-600 dark:text-gray-300 hover:shadow-md hover:border-slate-300 active:scale-95 transition-all mb-4 w-fit shrink-0"
-      >
-        <FiArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-        <span className="text-sm font-semibold hidden sm:inline">
-          Dashboard
-        </span>
-      </button>
       {/* VIEWPORT-LOCKED WRAPPER */}
       <div className="h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-4 sm:px-6 lg:px-8 transition-colors duration-300 font-sans flex flex-col overflow-hidden">
         <div className="max-w-6xl mx-auto w-full flex flex-col h-full">
+          <button
+            onClick={() => navigate("/")}
+            aria-label="Back to dashboard"
+            className="group flex items-center gap-2 px-4 h-10 rounded-xl bg-white dark:bg-gray-900 shadow-sm border border-slate-200/70 dark:border-gray-800 text-slate-600 dark:text-gray-300 hover:shadow-md hover:border-slate-300 active:scale-95 transition-all mb-4 w-fit shrink-0"
+          >
+            <FiArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-sm font-semibold hidden sm:inline">
+              Dashboard
+            </span>
+          </button>
           {/* HERO HEADER */}
           <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3">

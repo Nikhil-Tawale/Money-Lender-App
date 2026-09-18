@@ -136,7 +136,9 @@ const AddUser: React.FC = () => {
       `}</style>
 
       {/* VIEWPORT-LOCKED WRAPPER */}
-      <button
+      <div className="h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-4 sm:px-6 lg:px-8 transition-colors duration-300 font-sans flex flex-col overflow-hidden">
+        <div className="max-w-6xl mx-auto w-full flex flex-col h-full">
+          <button
           onClick={() => navigate("/")}
           aria-label="Back to dashboard"
           className="group flex items-center gap-2 px-4 h-10 rounded-xl bg-white dark:bg-gray-900 shadow-sm border border-slate-200/70 dark:border-gray-800 text-slate-600 dark:text-gray-300 hover:shadow-md hover:border-slate-300 active:scale-95 transition-all mb-4 w-fit shrink-0"
@@ -146,8 +148,6 @@ const AddUser: React.FC = () => {
             Dashboard
           </span>
         </button>
-      <div className="h-[100dvh] w-full bg-slate-50 dark:bg-gray-950 px-4 py-4 sm:px-6 lg:px-8 transition-colors duration-300 font-sans flex flex-col overflow-hidden">
-        <div className="max-w-6xl mx-auto w-full flex flex-col h-full">
           {/* HERO HEADER */}
           <div className="mb-4 flex items-center gap-3 shrink-0">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">

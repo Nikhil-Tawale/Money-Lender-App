@@ -141,7 +141,6 @@ const translations = {
     paymentHistory: "Payment History",
     noPayments: "No payments recorded yet",
     noPaymentsDesc: "Add the first payment to start tracking.",
-    paymentPending: "Next payment pending",
     riskLow: "LOW",
     riskMedium: "MEDIUM",
     riskHigh: "HIGH",
